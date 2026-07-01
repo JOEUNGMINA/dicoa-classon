@@ -1,0 +1,4485 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>클래스온 수업도구함</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-2: #f7fff0;
+    --surface: #ffffff;
+    --ink: #4b4b4b;
+    --ink-soft: #777777;
+    --ink-muted: #a0a0a0;
+    --accent: #58cc02;
+    --accent-soft: #d7ffb8;
+    --accent-deep: #46a302;
+    --gold: #ffc800;
+    --gold-soft: #fff4b8;
+    --teal: #00b8a9;
+    --danger: #ff4b4b;
+    --line: #e5e5e5;
+    --line-soft: #f2f2f2;
+    --topbar: #ffffff;
+    --shadow-sm: 0 1px 2px rgba(42, 92, 15, 0.08);
+    --shadow: 0 5px 18px rgba(42, 92, 15, 0.10);
+    --shadow-window: 0 20px 54px rgba(28, 70, 8, 0.20), 0 5px 14px rgba(42, 92, 15, 0.10);
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html, body { height: 100%; overflow: hidden; }
+  
+  body {
+    font-family: 'Nunito', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    background: var(--bg);
+    color: var(--ink);
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(88, 204, 2, 0.13) 0%, transparent 45%),
+      radial-gradient(circle at 88% 25%, rgba(255, 200, 0, 0.09) 0%, transparent 45%),
+      radial-gradient(circle at 75% 85%, rgba(88, 204, 2, 0.08) 0%, transparent 50%);
+    letter-spacing: -0.01em;
+    user-select: none;
+  }
+  
+  /* ===== TOP BAR ===== */
+  .topbar {
+    height: 60px;
+    background: var(--topbar);
+    color: #f8f5ec;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    box-shadow: var(--shadow);
+    position: relative;
+    z-index: 50;
+  }
+  
+  .topbar::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--gold), var(--accent), var(--teal));
+    opacity: 0.7;
+  }
+  
+  .brand { display: flex; align-items: center; gap: 12px; }
+  
+  .brand-mark {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--gold), var(--accent));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-weight: 700; font-size: 20px;
+    color: white;
+    transform: rotate(-4deg);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+  }
+  
+  .brand-text { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
+  .brand-sub {
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    color: rgba(248, 245, 236, 0.55);
+    margin-left: 4px;
+  }
+  
+  .top-right { display: flex; align-items: center; gap: 18px; }
+  
+  .clock-mini {
+    font-variant-numeric: tabular-nums;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: rgba(248, 245, 236, 0.92);
+    display: flex; align-items: center; gap: 8px;
+  }
+  
+  .clock-dot {
+    width: 6px; height: 6px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  .credit {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 12px;
+    background: rgba(248, 245, 236, 0.08);
+    border: 1px solid rgba(248, 245, 236, 0.12);
+    border-radius: 999px;
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    color: rgba(248, 245, 236, 0.85);
+    letter-spacing: 0;
+  }
+  
+  .credit-label {
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: rgba(248, 245, 236, 0.5);
+    text-transform: uppercase;
+  }
+  
+  .credit-name { color: #f4c84a; font-weight: 700; }
+  
+  .credit-heart { color: var(--accent); font-size: 11px; }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  
+  /* ===== WORKSPACE ===== */
+  .workspace {
+    height: calc(100vh - 60px);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* 빈 화면 안내 */
+  .welcome {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+  
+  .welcome.hidden { opacity: 0.15; }
+  
+  .welcome-title {
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  
+  .welcome-title .accent { color: var(--accent); }
+  
+  .welcome-sub {
+    font-size: 16px;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .welcome-arrow {
+    display: inline-block;
+    font-size: 22px;
+    animation: bounce 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+  
+  .welcome-deco {
+    position: absolute;
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    color: var(--line);
+    font-size: 220px;
+    font-weight: 700;
+    opacity: 0.18;
+    pointer-events: none;
+    user-select: none;
+  }
+  .welcome-deco.tl { top: 20px; left: 30px; transform: rotate(-8deg); }
+  .welcome-deco.br { bottom: 110px; right: 40px; font-size: 180px; transform: rotate(6deg); }
+  
+  /* ===== WINDOW ===== */
+  .window {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow-window);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-width: 320px;
+    min-height: 220px;
+    animation: windowOpen 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .window.closing {
+    animation: windowClose 0.18s ease forwards;
+  }
+  
+  @keyframes windowOpen {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  
+  @keyframes windowClose {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.92); }
+  }
+  
+  .window-header {
+    height: 46px;
+    background: linear-gradient(to bottom, var(--bg-2), var(--surface));
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 10px;
+    cursor: grab;
+    flex-shrink: 0;
+  }
+  
+  .window-header.dragging { cursor: grabbing; }
+  
+  .window-icon { font-size: 18px; line-height: 1; }
+  
+  .window-title {
+    font-weight: 700;
+    font-size: 14px;
+    flex: 1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  
+  .window-actions { display: flex; gap: 6px; }
+  
+  .window-action {
+    width: 26px; height: 26px;
+    border: none;
+    border-radius: 50%;
+    background: var(--line-soft);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    line-height: 1;
+    transition: all 0.15s ease;
+  }
+  
+  .window-action:hover { background: var(--line); color: var(--ink); }
+  
+  .window-action.close:hover { background: var(--danger); color: white; }
+  
+  .window-content {
+    flex: 1;
+    overflow: auto;
+    background: var(--surface);
+    padding: 24px;
+  }
+  
+  /* 크기 조절 핸들 */
+  .resize-handle {
+    position: absolute;
+    z-index: 2;
+  }
+  .resize-handle.se {
+    right: 0; bottom: 0;
+    width: 18px; height: 18px;
+    cursor: nwse-resize;
+    background: linear-gradient(
+      135deg,
+      transparent 0%,
+      transparent 45%,
+      var(--ink-muted) 45%,
+      var(--ink-muted) 55%,
+      transparent 55%,
+      transparent 70%,
+      var(--ink-muted) 70%,
+      var(--ink-muted) 80%,
+      transparent 80%
+    );
+    opacity: 0.5;
+    transition: opacity 0.15s;
+  }
+  .resize-handle.se:hover { opacity: 1; }
+  
+  .resize-handle.e {
+    right: 0; top: 46px; bottom: 18px;
+    width: 6px;
+    cursor: ew-resize;
+  }
+  .resize-handle.s {
+    left: 0; right: 18px; bottom: 0;
+    height: 6px;
+    cursor: ns-resize;
+  }
+  
+  /* 창 내부 placeholder */
+  .ph {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    text-align: center;
+  }
+  .ph-icon { font-size: 56px; opacity: 0.5; }
+  .ph-title {
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .ph-desc { font-size: 14px; color: var(--ink-muted); }
+  .ph-badge {
+    display: inline-flex;
+    padding: 5px 12px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  
+  /* 시계 창 */
+  .clock-tool {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(16px, 4cqw, 32px);
+    container-type: inline-size;
+    position: relative;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(245, 158, 11, 0.08), transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(18, 63, 109, 0.10), transparent 50%);
+    margin: -24px;
+    padding: 24px;
+    border-radius: 0;
+  }
+  
+  .clock-greeting {
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: clamp(13px, 3cqw, 18px);
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+    margin-bottom: -4px;
+  }
+  
+  .clock-time {
+    font-variant-numeric: tabular-nums;
+    font-weight: 200;
+    font-size: clamp(56px, 22cqw, 160px);
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    line-height: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+  }
+  
+  .clock-time .colon {
+    color: var(--accent);
+    font-weight: 300;
+    animation: colonBlink 2s ease-in-out infinite;
+    margin: 0 0.05em;
+  }
+  
+  @keyframes colonBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+  
+  .clock-time .sec-wrap {
+    display: inline-flex;
+    align-items: baseline;
+    font-size: 0.45em;
+    font-weight: 300;
+    color: var(--accent);
+    margin-left: 0.18em;
+    opacity: 0.85;
+  }
+  
+  .clock-time .sec-wrap .colon-s {
+    margin: 0 0.1em 0 0;
+    opacity: 0.45;
+  }
+  
+  .clock-date {
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: clamp(18px, 5cqw, 32px);
+    color: var(--ink-soft);
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+  
+  .clock-date .day {
+    color: var(--accent-deep);
+    margin-left: 6px;
+  }
+  
+  .minute-progress {
+    width: clamp(160px, 50%, 360px);
+    height: 3px;
+    background: var(--line-soft);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  
+  .minute-progress .bar {
+    height: 100%;
+    background: linear-gradient(to right, var(--gold), var(--accent));
+    border-radius: 2px;
+    transition: width 0.95s linear;
+  }
+  
+  .minute-progress .bar.no-trans {
+    transition: none;
+  }
+  
+  /* ===== 타이머 ===== */
+  .timer-tool {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 8px;
+    container-type: inline-size;
+  }
+  
+  .timer-display {
+    position: relative;
+    width: clamp(180px, 50cqw, 280px);
+    aspect-ratio: 1;
+    flex-shrink: 0;
+  }
+  
+  .timer-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  
+  .timer-ring-bg {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 8;
+  }
+  
+  .timer-ring-fg {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s linear, stroke 0.4s ease;
+  }
+  
+  .timer-tool.warning .timer-ring-fg { stroke: var(--gold); }
+  .timer-tool.danger .timer-ring-fg { stroke: var(--danger); }
+  .timer-tool.complete .timer-ring-fg { stroke: var(--accent-deep); }
+  
+  .timer-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  
+  .timer-time {
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(40px, 16cqw, 80px);
+    font-weight: 200;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    line-height: 1;
+    transition: color 0.3s;
+  }
+  
+  .timer-time .colon {
+    color: var(--accent);
+    margin: 0 0.05em;
+  }
+  
+  .timer-tool.danger .timer-time { color: var(--danger); animation: pulseTimer 0.6s ease-in-out infinite; }
+  .timer-tool.complete .timer-time { color: var(--accent-deep); }
+  
+  @keyframes pulseTimer {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  .timer-status {
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: clamp(12px, 4cqw, 18px);
+    color: var(--ink-soft);
+    margin-top: 4px;
+    font-weight: 700;
+  }
+  
+  .timer-tool.complete .timer-status { color: var(--accent-deep); animation: bounceStatus 0.5s ease-in-out 4; }
+  
+  @keyframes bounceStatus {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  
+  .timer-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .timer-btn {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: -0.01em;
+  }
+  
+  .timer-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+  
+  .timer-btn .icon { font-size: 13px; line-height: 1; }
+  
+  .timer-btn.primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    padding: 11px 30px;
+    font-size: 15px;
+    box-shadow: 0 4px 14px rgba(31, 95, 153, 0.32);
+    min-width: 120px;
+    justify-content: center;
+  }
+  
+  .timer-btn.primary:hover {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+    color: white;
+    box-shadow: 0 6px 18px rgba(22, 63, 103, 0.36);
+    transform: translateY(-1px);
+  }
+  
+  .timer-btn.icon-only {
+    padding: 10px 12px;
+    min-width: 42px;
+    justify-content: center;
+    font-size: 16px;
+  }
+  
+  .timer-presets {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100%;
+  }
+  
+  .timer-preset {
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    color: var(--ink-soft);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: -0.02em;
+  }
+  
+  .timer-preset:hover {
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    border-color: var(--accent);
+  }
+  
+  .timer-preset.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    box-shadow: 0 2px 6px rgba(31, 95, 153, 0.3);
+  }
+  
+  .timer-adjust {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .timer-adjust button {
+    border: 1px solid var(--line-soft);
+    background: transparent;
+    color: var(--ink-muted);
+    padding: 5px 11px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.12s;
+    letter-spacing: -0.02em;
+  }
+  
+  .timer-adjust button:hover {
+    background: var(--bg);
+    color: var(--ink);
+    border-color: var(--line);
+  }
+  
+  /* ===== 화이트보드 ===== */
+  .whiteboard-tool {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: -24px;
+    background: var(--surface);
+  }
+  
+  .wb-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  
+  .wb-tool-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .wb-tool-group.right {
+    margin-left: auto;
+    gap: 6px;
+  }
+  
+  .wb-tool-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+    margin-right: 2px;
+    text-transform: uppercase;
+  }
+  
+  .wb-size-btn {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    width: 32px;
+    height: 32px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: -0.02em;
+    transition: all 0.15s;
+  }
+  .wb-size-btn:hover {
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    border-color: var(--accent);
+  }
+  .wb-size-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  
+  .wb-color-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid white;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.15s;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .wb-color-btn:hover { transform: scale(1.18); }
+  .wb-color-btn.active {
+    box-shadow: 0 0 0 2px var(--accent);
+    transform: scale(1.1);
+  }
+  
+  .wb-action-btn {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    padding: 7px 14px;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: -0.01em;
+  }
+  .wb-action-btn:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent-deep);
+  }
+  .wb-action-btn.danger:hover {
+    background: #fef2f2;
+    border-color: var(--danger);
+    color: var(--danger);
+  }
+  
+  .wb-canvas {
+    flex: 1;
+    position: relative;
+    overflow: auto;
+    background: #fffefb;
+    background-image:
+      linear-gradient(rgba(18, 63, 109, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(18, 63, 109, 0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+    cursor: text;
+  }
+  
+
+  .wb-mode-btn {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink-soft);
+    padding: 7px 11px; border-radius: 7px; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+  }
+  .wb-mode-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .wb-brush-range { width: 92px; accent-color: var(--accent); cursor: pointer; }
+  .wb-draw-canvas { position:absolute; inset:0; width:100%; height:100%; z-index:1; touch-action:none; cursor:crosshair; }
+  .wb-canvas.text-mode .wb-draw-canvas { pointer-events:none; cursor:default; }
+  .wb-canvas.pen-mode { cursor:crosshair; overflow:hidden; }
+  .wb-canvas.pen-mode .wb-textbox { pointer-events:none; }
+  .wb-textbox { z-index:3; }
+
+  .wb-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: 22px;
+    color: var(--ink-muted);
+    pointer-events: none;
+    transition: opacity 0.3s;
+    text-align: center;
+  }
+  
+  .wb-hint.hidden { opacity: 0; }
+  
+  .wb-hint-icon {
+    font-size: 56px;
+    opacity: 0.5;
+  }
+  
+  .wb-hint-sub {
+    font-size: 14px;
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    color: var(--ink-muted);
+    opacity: 0.7;
+  }
+  
+  .wb-textbox {
+    position: absolute;
+    background: transparent;
+    border: 2px dashed transparent;
+    border-radius: 6px;
+    padding: 4px 10px;
+    min-width: 60px;
+    min-height: 32px;
+  }
+  
+  .wb-textbox:hover {
+    border-color: var(--line);
+    background: rgba(255, 255, 255, 0.85);
+  }
+  
+  .wb-textbox.editing {
+    border-color: var(--accent);
+    border-style: solid;
+    background: var(--surface);
+    box-shadow: 0 4px 16px rgba(31, 95, 153, 0.18);
+  }
+  
+  .wb-textbox-handle {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 7px;
+    background: var(--accent);
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    cursor: grab;
+  }
+  
+  .wb-textbox:hover .wb-textbox-handle,
+  .wb-textbox.editing .wb-textbox-handle {
+    opacity: 1;
+  }
+  
+  .wb-textbox-handle:active { cursor: grabbing; }
+  
+  .wb-textbox-delete {
+    position: absolute;
+    top: -11px;
+    right: -11px;
+    width: 22px;
+    height: 22px;
+    border: none;
+    border-radius: 50%;
+    background: var(--danger);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.35);
+    line-height: 1;
+    padding-bottom: 2px;
+  }
+  
+  .wb-textbox:hover .wb-textbox-delete,
+  .wb-textbox.editing .wb-textbox-delete {
+    opacity: 1;
+  }
+  
+  .wb-textbox-delete:hover { transform: scale(1.15); }
+  
+  .wb-textbox-content {
+    outline: none;
+    font-family: inherit;
+    font-weight: 700;
+    line-height: 1.3;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-width: 40px;
+    min-height: 1em;
+    user-select: text;
+    cursor: text;
+  }
+  
+  /* 4개 꼭지점 리사이즈 핸들 (글자 크기 조절) */
+  .wb-textbox-resize {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    box-shadow: 0 1px 4px rgba(31, 95, 153, 0.4);
+    z-index: 3;
+    padding: 0;
+  }
+  
+  .wb-textbox-resize.tl { top: -10px; left: -10px; cursor: nwse-resize; }
+  .wb-textbox-resize.tr { top: -10px; right: -10px; cursor: nesw-resize; }
+  .wb-textbox-resize.bl { bottom: -10px; left: -10px; cursor: nesw-resize; }
+  .wb-textbox-resize.br { bottom: -10px; right: -10px; cursor: nwse-resize; }
+  
+  /* 좌우 사이드 핸들 (가로 너비 조절) */
+  .wb-textbox-side {
+    position: absolute;
+    top: 50%;
+    width: 8px;
+    height: 28px;
+    background: white;
+    border: 2px solid var(--accent);
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    box-shadow: 0 1px 4px rgba(31, 95, 153, 0.4);
+    z-index: 2;
+    cursor: ew-resize;
+    transform: translateY(-50%);
+  }
+  .wb-textbox-side.l { left: -8px; }
+  .wb-textbox-side.r { right: -8px; }
+  
+  .wb-textbox:hover .wb-textbox-resize,
+  .wb-textbox.editing .wb-textbox-resize,
+  .wb-textbox:hover .wb-textbox-side,
+  .wb-textbox.editing .wb-textbox-side {
+    opacity: 1;
+  }
+  
+  .wb-textbox-resize:hover { transform: scale(1.25); }
+  .wb-textbox-side:hover { transform: translateY(-50%) scaleY(1.15) scaleX(1.3); }
+  
+  /* ===== 모둠 만들기 ===== */
+  .groups-tool {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: -24px;
+    background: var(--surface);
+    container-type: inline-size;
+  }
+  
+  .groups-view {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .groups-view.hidden { display: none; }
+  
+  /* Setup view */
+  .groups-setup-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    overflow: hidden;
+    min-height: 0;
+  }
+  
+  @container (max-width: 560px) {
+    .groups-setup-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+    }
+  }
+  
+  .groups-config {
+    background: var(--bg-2);
+    padding: 22px 18px;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    overflow-y: auto;
+  }
+  
+  @container (max-width: 560px) {
+    .groups-config { border-right: none; border-bottom: 1px solid var(--line); }
+  }
+  
+  .config-section { display: flex; flex-direction: column; }
+  
+  .config-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  
+  .config-modes {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+  }
+  
+  .config-mode-btn {
+    flex: 1;
+    padding: 8px 10px;
+    border: none;
+    background: transparent;
+    color: var(--ink-soft);
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.15s;
+    letter-spacing: -0.01em;
+  }
+  
+  .config-mode-btn.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 2px 6px rgba(31, 95, 153, 0.3);
+  }
+  
+  .config-counter {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 4px;
+  }
+  
+  .counter-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 7px;
+    transition: background 0.15s;
+  }
+  .counter-btn:hover {
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+  }
+  
+  .counter-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    text-align: center;
+    outline: none;
+    width: 60px;
+    -moz-appearance: textfield;
+  }
+  .counter-input::-webkit-inner-spin-button,
+  .counter-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  .groups-generate-btn {
+    margin-top: auto;
+    padding: 14px 18px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(31, 95, 153, 0.32);
+    transition: all 0.15s;
+    letter-spacing: -0.01em;
+  }
+  .groups-generate-btn:hover:not(:disabled) {
+    background: var(--accent-deep);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(22, 63, 103, 0.38);
+  }
+  .groups-generate-btn:disabled {
+    background: var(--ink-muted);
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.6;
+  }
+  
+  /* Input panel */
+  .groups-input {
+    display: flex;
+    flex-direction: column;
+    padding: 22px;
+    gap: 12px;
+    min-height: 0;
+  }
+  
+  .input-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  
+  .input-count {
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: 17px;
+    color: var(--accent-deep);
+    font-weight: 700;
+  }
+  
+  .students-textarea {
+    flex: 1;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--surface);
+    resize: none;
+    outline: none;
+    line-height: 1.7;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    user-select: text;
+    min-height: 100px;
+  }
+  
+  .students-textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  
+  .students-textarea::placeholder {
+    color: var(--ink-muted);
+    opacity: 0.7;
+  }
+  
+  .input-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  
+  .input-action-btn {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    padding: 6px 12px;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .input-action-btn:hover {
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    border-color: var(--accent);
+  }
+  
+  /* Result view */
+  .groups-result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+    gap: 10px;
+  }
+  
+  .result-back-btn, .result-reshuffle-btn {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: -0.01em;
+  }
+  .result-back-btn:hover {
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    border-color: var(--accent);
+  }
+  
+  .result-reshuffle-btn {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(31, 95, 153, 0.3);
+  }
+  .result-reshuffle-btn:hover {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+    transform: translateY(-1px);
+  }
+  
+  .result-info {
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    flex: 1;
+    text-align: center;
+  }
+  
+  .groups-grid {
+    flex: 1;
+    overflow: auto;
+    padding: 18px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    align-content: start;
+    align-items: start;
+  }
+  
+  .group-card {
+    background: var(--surface);
+    border: 2px solid;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: groupPop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: backwards;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .group-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: currentColor;
+  }
+  
+  @keyframes groupPop {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  
+  .group-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 2px dashed currentColor;
+    opacity: 0.95;
+    flex-shrink: 0;
+  }
+  
+  .group-card-title {
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: currentColor;
+    line-height: 1;
+  }
+  
+  .group-card-count {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    background: var(--bg);
+    padding: 3px 9px;
+    border-radius: 999px;
+    letter-spacing: -0.02em;
+  }
+  
+  .group-card-members {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  
+  .group-member {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: var(--bg-2);
+    transition: background 0.15s;
+  }
+  .group-member:hover { background: var(--bg); }
+  
+  /* ===== 매칭 ===== */
+  .match-tool {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: -24px;
+    background: var(--surface);
+    container-type: inline-size;
+  }
+  
+  .match-view {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .match-view.hidden { display: none; }
+  
+  .match-setup-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 22px;
+    gap: 14px;
+    min-height: 0;
+  }
+  
+  .match-setup-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    min-height: 0;
+  }
+  
+  @container (max-width: 540px) {
+    .match-setup-grid { grid-template-columns: 1fr; }
+  }
+  
+  .match-input-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+  }
+  
+  .match-input-col .students-textarea {
+    flex: 1;
+    min-height: 100px;
+  }
+  
+  .match-color-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+    box-shadow: 0 0 0 2px var(--surface), 0 1px 3px rgba(0,0,0,0.15);
+  }
+  
+  .match-actions-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .pairs-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  
+  .pairs-info-icon { font-size: 15px; }
+  
+  .pairs-generate-btn {
+    padding: 13px 24px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(31, 95, 153, 0.32);
+    transition: all 0.15s;
+    letter-spacing: -0.01em;
+  }
+  .pairs-generate-btn:hover:not(:disabled) {
+    background: var(--accent-deep);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(22, 63, 103, 0.38);
+  }
+  .pairs-generate-btn:disabled {
+    background: var(--ink-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
+  }
+  
+  .pairs-result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+    gap: 10px;
+  }
+  
+  .match-result-content {
+    flex: 1;
+    overflow: auto;
+    padding: 18px;
+  }
+  
+  .match-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 12px;
+    align-content: start;
+    align-items: start;
+  }
+  
+  .match-pair-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: groupPop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: backwards;
+  }
+  
+  .match-member {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 9px 12px;
+    border-radius: 8px;
+    text-align: center;
+    letter-spacing: -0.01em;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .match-member.g1 {
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+  }
+  
+  .match-member.g2 {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  
+  .match-connector {
+    font-size: 18px;
+    color: var(--ink-muted);
+    font-weight: 700;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  
+  .match-leftover {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+  }
+  
+  .match-leftover.hidden { display: none; }
+  
+  .match-leftover-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--danger);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  
+  .match-leftover-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .match-leftover-item {
+    background: white;
+    border: 1px solid;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .match-leftover-item.g1 { border-color: var(--accent); color: var(--accent-deep); }
+  .match-leftover-item.g2 { border-color: var(--gold); color: #92400e; }
+  
+  /* ===== 발표자 돌림판 ===== */
+  .spinner-tool {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: -24px;
+    background: var(--surface);
+    container-type: inline-size;
+  }
+  
+  .spinner-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    overflow: hidden;
+    min-height: 0;
+  }
+  
+  @container (max-width: 540px) {
+    .spinner-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 200px;
+    }
+  }
+  
+  .spinner-input-panel {
+    background: var(--bg-2);
+    padding: 22px 18px;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+    min-height: 0;
+  }
+  
+  @container (max-width: 540px) {
+    .spinner-input-panel { 
+      border-right: none; 
+      border-top: 1px solid var(--line); 
+      grid-row: 2;
+    }
+  }
+  
+  .spinner-input-panel .students-textarea {
+    flex: 1;
+    min-height: 100px;
+  }
+  
+  .spinner-wheel-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    gap: 14px;
+    overflow: hidden;
+    min-height: 0;
+    background: 
+      radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.04), transparent 60%),
+      radial-gradient(circle at 50% 50%, rgba(31, 95, 153, 0.05), transparent 70%);
+  }
+  
+  .spinner-wheel-wrap {
+    position: relative;
+    width: min(440px, 96%);
+    aspect-ratio: 1;
+    flex-shrink: 1;
+    min-height: 0;
+  }
+  
+  .spinner-pointer {
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    width: 32px;
+    height: 40px;
+    filter: drop-shadow(0 3px 5px rgba(15, 39, 71, 0.35));
+    pointer-events: none;
+  }
+  
+  .spinner-wheel {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    transition: transform 4.6s cubic-bezier(0.17, 0.85, 0.27, 1);
+    filter: drop-shadow(0 6px 24px rgba(15, 39, 71, 0.18));
+    transform-origin: 50% 50%;
+  }
+  
+  .spinner-wheel.idle:hover { 
+    filter: drop-shadow(0 8px 32px rgba(31, 95, 153, 0.35));
+    transform: scale(1.02);
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+  
+  .spinner-result {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 18px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    min-height: 38px;
+    flex-shrink: 0;
+  }
+  
+  .spinner-result.win {
+    background: linear-gradient(135deg, var(--accent-soft), var(--gold-soft));
+    border-color: var(--accent);
+    box-shadow: 0 4px 14px rgba(31, 95, 153, 0.2);
+  }
+  
+  .spinner-result-label {
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    color: var(--ink-soft);
+    font-weight: 700;
+  }
+  
+  .spinner-result-name {
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+  }
+  
+  .spinner-result.win .spinner-result-name {
+    color: var(--accent-deep);
+  }
+  
+  .spinner-result.celebrate .spinner-result-name {
+    animation: celebrate 0.6s ease;
+  }
+  
+  @keyframes celebrate {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.4) rotate(-3deg); }
+    60% { transform: scale(1.15) rotate(2deg); }
+    100% { transform: scale(1); }
+  }
+  
+  .spinner-spin-btn {
+    padding: 10px 28px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(31, 95, 153, 0.32);
+    transition: all 0.15s;
+    letter-spacing: -0.01em;
+    flex-shrink: 0;
+  }
+  .spinner-spin-btn:hover:not(:disabled) {
+    background: var(--accent-deep);
+    transform: translateY(-1px);
+  }
+  .spinner-spin-btn:disabled {
+    background: var(--ink-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
+  }
+  
+  /* ===== QR 코드 ===== */
+  .qr-tool {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, var(--bg-2), var(--surface));
+    overflow: hidden;
+  }
+  
+  .qr-input-area {
+    padding: 16px 18px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  
+  .qr-input-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 7px;
+    letter-spacing: 0.02em;
+  }
+  
+  .qr-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 14px;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--bg);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    resize: vertical;
+    min-height: 60px;
+    max-height: 120px;
+    line-height: 1.5;
+  }
+  .qr-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(31, 95, 153, 0.15);
+    background: white;
+  }
+  .qr-input::placeholder {
+    color: var(--ink-muted);
+  }
+  
+  .qr-quick-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 9px;
+    flex-wrap: wrap;
+  }
+  
+  .qr-quick-btn {
+    padding: 6px 11px;
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    border: 1px solid transparent;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .qr-quick-btn:hover {
+    background: var(--accent);
+    color: white;
+  }
+  .qr-quick-btn.clear {
+    background: transparent;
+    color: var(--ink-soft);
+    border-color: var(--line);
+    margin-left: auto;
+  }
+  .qr-quick-btn.clear:hover {
+    background: var(--bg-2);
+    color: var(--ink);
+    border-color: var(--accent);
+  }
+  
+  .qr-display-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    gap: 12px;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* QR 무대 — 가능한 공간을 모두 차지하고 정사각 프레임을 가운데 배치 */
+  .qr-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .qr-canvas-frame {
+    background: white;
+    padding: 14px;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(15, 39, 71, 0.12), 0 0 0 1px var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.15s ease, height 0.15s ease, transform 0.2s;
+    box-sizing: border-box;
+    /* JS가 width/height를 동적으로 설정 */
+    width: 240px;
+    height: 240px;
+  }
+  
+  .qr-canvas-frame:hover {
+    transform: scale(1.01);
+  }
+  
+  .qr-canvas-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+  
+  .qr-empty {
+    color: var(--ink-muted);
+    font-size: 13px;
+    text-align: center;
+    padding: 30px 20px;
+    line-height: 1.6;
+  }
+  .qr-empty .qr-empty-icon {
+    font-size: 44px;
+    margin-bottom: 8px;
+    opacity: 0.4;
+  }
+  
+  .qr-action-row {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  
+  .qr-action-btn {
+    padding: 9px 18px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(31, 95, 153, 0.28);
+    transition: all 0.15s;
+    letter-spacing: -0.01em;
+  }
+  .qr-action-btn:hover:not(:disabled) {
+    background: var(--accent-deep);
+    transform: translateY(-1px);
+  }
+  .qr-action-btn:disabled {
+    background: var(--ink-muted);
+    cursor: not-allowed;
+    opacity: 0.5;
+    box-shadow: none;
+  }
+  .qr-action-btn.secondary {
+    background: var(--gold);
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.28);
+  }
+  .qr-action-btn.secondary:hover:not(:disabled) {
+    background: #d97706;
+  }
+  
+  /* ===== DOCK (좌측 세로형) ===== */
+  .dock {
+    position: fixed;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 10px;
+    background: rgba(45, 31, 79, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 20px;
+    box-shadow: 0 12px 36px rgba(15, 39, 71, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+    z-index: 1000;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .dock::-webkit-scrollbar { display: none; }
+
+  .dock-item {
+    width: 50px; height: 50px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255, 255, 255, 0.14);
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.18s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .dock-item:hover {
+    background: rgba(255, 255, 255, 0.24);
+    transform: translateX(4px) scale(1.06);
+  }
+
+  .dock-item:active { transform: translateX(2px) scale(1.02); }
+
+  .dock-item.active::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  }
+
+  .dock-tooltip {
+    position: absolute;
+    left: calc(100% + 14px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: white;
+    padding: 5px 11px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s, transform 0.15s;
+    box-shadow: 0 4px 12px rgba(15, 39, 71, 0.25);
+  }
+
+  .dock-tooltip::after {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-right-color: var(--ink);
+  }
+
+  .dock-item:hover .dock-tooltip {
+    opacity: 1;
+    transform: translateY(-50%) translateX(2px);
+  }
+
+  /* 도크 구분선 (가로 줄) */
+  .dock-sep {
+    width: 32px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.12);
+    margin: 4px 0;
+  }
+
+  /* ===== 키보드 ===== */
+  .keyboard-tool {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 14px 14px 18px;
+    background: linear-gradient(180deg, var(--bg-2), var(--surface));
+    overflow: hidden;
+    gap: 8px;
+  }
+
+  .kb-status {
+    text-align: center;
+    width: 100%;
+    padding: 4px 8px 2px;
+    flex-shrink: 0;
+  }
+
+  .kb-current-key {
+    font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--accent-deep);
+    min-height: 3rem;
+    line-height: 3rem;
+    letter-spacing: 0.02em;
+    text-shadow: 0 2px 6px rgba(31, 95, 153, 0.18);
+  }
+
+  .kb-instruction {
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    margin-top: 2px;
+  }
+
+  /* 키보드가 들어갈 무대(stage) — 사용 가능한 공간을 모두 차지 */
+  .kb-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .kb-container {
+    background: #2f5b16;
+    padding: 16px;
+    border-radius: 16px;
+    box-shadow: 0 12px 28px rgba(15, 39, 71, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    border: 1px solid #4b4b4b;
+    transform-origin: center center;
+    transition: transform 0.18s ease;
+    will-change: transform;
+  }
+
+  .kb-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+  }
+  .kb-row:last-child { margin-bottom: 0; }
+
+  .kb-key {
+    position: relative;
+    min-width: 38px;
+    height: 42px;
+    margin: 3px;
+    background: #3d751c;
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    padding: 4px 6px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.1s ease;
+    border-bottom: 3px solid #24470f;
+    user-select: none;
+    color: #e5e5e5;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .kb-key .eng {
+    align-self: flex-start;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .kb-key .kor {
+    align-self: flex-end;
+    margin-top: auto;
+    font-size: 11px;
+    color: #b7d8a7;
+    line-height: 1;
+  }
+
+  .kb-key.active {
+    background: var(--accent);
+    color: #ffffff !important;
+    border-bottom: 0px solid transparent;
+    transform: translateY(3px);
+    box-shadow: 0 0 14px rgba(31, 95, 153, 0.65), 0 0 0 1px rgba(245, 158, 11, 0.4);
+  }
+
+  .kb-key.active .kor, .kb-key.active .eng {
+    color: #ffffff;
+  }
+
+  .kb-key.special {
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    font-size: 11px;
+    color: #f4c84a;
+    background: #315d18;
+  }
+
+  .kb-key.backspace { width: 82px; }
+  .kb-key.tab { width: 60px; }
+  .kb-key.capslock { width: 72px; }
+  .kb-key.enter { width: 78px; }
+  .kb-key.shift { width: 98px; }
+  .kb-key.ctrl, .kb-key.win, .kb-key.alt { width: 56px; }
+  .kb-key.space { width: 270px; }
+
+
+
+  /* ===== 관리자 잠금 ===== */
+  .lock-btn {
+    border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.10); color:#fff;
+    padding: 7px 12px; border-radius: 999px; font-family: inherit; font-size: 12px; font-weight: 700;
+    cursor:pointer; transition:.15s; flex:none;
+  }
+  .lock-btn:hover { background: rgba(255,255,255,.20); }
+  .auth-overlay {
+    position:fixed; inset:0; z-index:99999; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(145deg,#24470f,#315d18 55%,#3f7a1e); padding:20px;
+  }
+  .auth-overlay.hidden { display:none; }
+  .auth-card { width:min(420px,100%); background:#fff; border-radius:20px; padding:30px; box-shadow:0 24px 80px rgba(0,0,0,.35); }
+  .auth-badge { display:inline-flex; padding:5px 10px; border-radius:999px; background:#d7ffb8; color:#46a302; font-size:11px; font-weight:800; }
+  .auth-card h2 { margin:14px 0 8px; font-size:26px; color:#4b4b4b; }
+  .auth-card p { color:#777777; font-size:13px; line-height:1.65; margin-bottom:18px; }
+  .auth-card input { width:100%; padding:13px 14px; border:1px solid #e5e5e5; border-radius:10px; font:inherit; font-size:16px; outline:none; user-select:text; }
+  .auth-card input:focus { border-color:#58cc02; box-shadow:0 0 0 3px rgba(31,95,153,.14); }
+  .auth-actions { display:flex; gap:8px; margin-top:12px; }
+  .auth-submit { flex:1; border:0; border-radius:10px; padding:12px; background:#4b4b4b; color:#fff; font:inherit; font-weight:800; cursor:pointer; }
+  .auth-reset { border:1px solid #e5e5e5; border-radius:10px; padding:12px; background:#fff; color:#777777; font:inherit; font-weight:700; cursor:pointer; }
+  .auth-error { min-height:20px; margin-top:9px; color:#c0392b; font-size:12px; }
+  .auth-note { margin-top:14px; padding-top:12px; border-top:1px solid #f2f2f2; font-size:11px; color:#a0a0a0; line-height:1.55; }
+
+  /* ===== 고급 QR 생성기 ===== */
+  .qr-pro { height:100%; display:flex; flex-direction:column; margin:-24px; background:#fafafa; overflow:hidden; }
+  .qr-pro-scroll { flex:1; overflow:auto; padding:18px; }
+  .qr-pro-grid { display:grid; grid-template-columns:minmax(260px,1fr) minmax(240px,.9fr); gap:16px; align-items:start; }
+  .qr-panel { background:#fff; border:1px solid var(--line); border-radius:13px; padding:16px; box-shadow:var(--shadow-sm); }
+  .qr-panel-title { font-size:12px; font-weight:800; color:var(--ink-soft); margin-bottom:12px; letter-spacing:.04em; }
+  .qr-field { margin-bottom:12px; }
+  .qr-field label { display:flex; justify-content:space-between; font-size:11px; font-weight:800; color:var(--ink-soft); margin-bottom:6px; }
+  .qr-field input[type=text], .qr-field input[type=url] { width:100%; border:1px solid var(--line); border-radius:8px; padding:9px 11px; font:inherit; color:var(--ink); outline:none; user-select:text; }
+  .qr-field input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(18,63,109,.12); }
+  .qr-color-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .qr-color { display:flex; align-items:center; gap:7px; border:1px solid var(--line); border-radius:8px; padding:7px; background:#ffffff; }
+  .qr-color input { width:30px; height:30px; border:0; background:none; padding:0; cursor:pointer; }
+  .qr-color span { font:12px monospace; color:var(--ink-soft); }
+  .qr-presets { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .qr-preset { border:1px solid var(--line); background:#fff; color:var(--ink-soft); border-radius:999px; padding:5px 9px; font:700 11px inherit; cursor:pointer; }
+  .qr-preset.active { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .qr-toggle-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-top:1px solid var(--line-soft); margin-top:12px; }
+  .qr-toggle-row label { font-size:12px; font-weight:800; color:var(--ink); }
+  .qr-overlay-options.hidden { display:none; }
+  .qr-range { width:100%; accent-color:var(--accent); }
+  .qr-preview-box { display:flex; flex-direction:column; align-items:center; gap:10px; min-height:380px; justify-content:center; background:#fff; border:1px dashed var(--line); border-radius:12px; padding:18px; }
+  .qr-render-wrap { position:relative; display:inline-block; }
+  .qr-render-wrap canvas, .qr-render-wrap img { display:block; }
+  .qr-overlay-live { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); padding:2px 6px; border-radius:4px; font-weight:900; line-height:1.1; white-space:nowrap; max-width:72%; overflow:hidden; text-overflow:ellipsis; pointer-events:none; }
+  .qr-preview-title { max-width:240px; text-align:center; font-size:14px; font-weight:800; word-break:break-all; }
+  .qr-preview-hint { font-size:11px; color:var(--ink-muted); text-align:center; word-break:break-all; max-width:280px; }
+  .qr-actions { display:flex; gap:8px; padding:12px 18px; border-top:1px solid var(--line); background:#fff; }
+  .qr-btn { flex:1; border:1px solid var(--line); border-radius:9px; padding:10px; font:800 13px inherit; cursor:pointer; background:#fff; color:var(--ink); }
+  .qr-btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .qr-btn:disabled { opacity:.45; cursor:not-allowed; }
+  @container (max-width:600px){ .qr-pro-grid{grid-template-columns:1fr}.qr-preview-box{min-height:300px} }
+
+
+/* ===== DUOLINGO VISUAL SYSTEM OVERRIDE ===== */
+:root{
+  --bg:#ffffff;--bg-2:#f7fff0;--surface:#ffffff;
+  --ink:#4b4b4b;--ink-soft:#777777;--ink-muted:#a0a0a0;
+  --accent:#58cc02;--accent-soft:#d7ffb8;--accent-deep:#46a302;
+  --gold:#ffc800;--gold-soft:#fff6cc;--teal:#1cb0f6;--danger:#ff4b4b;
+  --line:#e5e5e5;--line-soft:#f2f2f2;--topbar:#ffffff;
+  --shadow-sm:0 2px 0 rgba(0,0,0,.06);
+  --shadow:0 4px 0 rgba(0,0,0,.08);
+  --shadow-window:0 10px 30px rgba(0,0,0,.12),0 3px 0 rgba(0,0,0,.08);
+}
+body{font-family:'Nunito','Noto Sans KR',sans-serif;font-weight:700;background:#fff;color:var(--ink);background-image:none;letter-spacing:-.015em}
+.topbar{background:#fff;color:#4b4b4b;border-top:6px solid #4b3838;border-bottom:2px solid #e5e5e5;box-shadow:none;height:66px}
+.topbar::after{display:none}
+.brand-mark{background:#58cc02;color:#fff;border-radius:12px;box-shadow:0 4px 0 #46a302;font-weight:900}
+.brand-text{color:#58cc02;font-size:21px;font-weight:900;letter-spacing:-.03em}
+.brand-sub{color:#a0a0a0;font-weight:800}
+.clock-mini{color:#777}.clock-dot{background:#58cc02;box-shadow:0 0 0 4px #d7ffb8}
+.credit{background:#f7fff0;border:2px solid #d7ffb8;color:#4b4b4b}.credit-label{color:#a0a0a0}.credit-name{color:#46a302}.credit-heart{color:#58cc02}
+.workspace{height:calc(100vh - 66px);background:#fff}
+.welcome-title{font-family:'Nunito','Noto Sans KR',sans-serif;font-weight:900;color:#4b4b4b}
+.welcome-sub{font-weight:700;color:#777}
+.window{border:2px solid #e5e5e5;border-radius:18px;box-shadow:var(--shadow-window)}
+.window-header{background:#fff;border-bottom:2px solid #e5e5e5;height:52px}
+.window-title{font-size:16px;font-weight:900;color:#4b4b4b}
+.window-action{background:#f2f2f2;color:#777;font-weight:900}.window-action:hover{background:#d7ffb8;color:#46a302}
+.dock{background:#fff;border:2px solid #e5e5e5;box-shadow:0 8px 24px rgba(0,0,0,.12);border-radius:22px}
+.dock-item{background:#f2f2f2;color:#777;border:2px solid transparent}.dock-item:hover{background:#d7ffb8;color:#46a302}.dock-item.active{background:#58cc02;color:#fff;border-color:#46a302;box-shadow:0 4px 0 #46a302}.dock-sep{background:#e5e5e5}
+.timer-btn.primary,.groups-generate-btn,.pairs-generate-btn,.result-reshuffle-btn,.spinner-spin-btn,.qr-action-btn,.external-open-btn{background:#58cc02!important;color:#fff!important;border-color:#58cc02!important;box-shadow:0 4px 0 #46a302!important;border-radius:12px!important;font-weight:900!important}
+.timer-btn.primary:hover,.groups-generate-btn:hover,.pairs-generate-btn:hover,.result-reshuffle-btn:hover,.spinner-spin-btn:hover,.qr-action-btn:hover,.external-open-btn:hover{background:#61e002!important;transform:translateY(-1px)}
+.timer-preset.active,.config-mode-btn.active,.wb-size-btn.active,.wb-mode-btn.active{background:#58cc02!important;color:#fff!important;border-color:#58cc02!important;box-shadow:0 3px 0 #46a302!important}
+.keyboard-tool{background:#f7fff0}.kb-container{background:#2f5b16;border-color:#24470f;box-shadow:0 10px 24px rgba(70,163,2,.25)}.kb-key{background:#3d751c;border-bottom-color:#24470f;color:#fff}.kb-key .kor{color:#d7ffb8}.kb-key.special{background:#315d18;color:#ffc800}.kb-key.active{background:#58cc02!important;box-shadow:0 0 0 3px #d7ffb8,0 4px 0 #46a302!important}
+.auth-overlay{background:linear-gradient(145deg,#24470f,#315d18 55%,#3f7a1e)!important}.auth-submit{background:#58cc02!important;box-shadow:0 4px 0 #46a302}.auth-card{border-radius:20px}.auth-badge{background:#d7ffb8;color:#46a302}
+.qr-pro{background:#f7fff0}.qr-preview,.qr-canvas-frame{border:2px solid #e5e5e5;box-shadow:0 4px 0 #e5e5e5}
+input,textarea,button{font-family:'Nunito','Noto Sans KR',sans-serif}
+input:focus,textarea:focus{border-color:#58cc02!important;box-shadow:0 0 0 4px #d7ffb8!important}
+.group-card{border-width:2px;box-shadow:0 4px 0 rgba(0,0,0,.07)}
+.spinner-result.win{background:#d7ffb8;border-color:#58cc02}
+
+
+
+/* ===== 2026-07 수업 운영 업그레이드 ===== */
+.timer-activity-wrap{
+  width:min(92%,420px);display:flex;flex-direction:column;gap:7px;flex-shrink:0;
+}
+.timer-activity-wrap label{font-size:13px;font-weight:900;color:var(--ink-soft);letter-spacing:-.01em;}
+.timer-activity-input{
+  width:100%;height:44px;border:2px solid #e5e5e5;border-radius:12px;background:#fff;
+  padding:0 14px;font-family:inherit;font-size:17px;font-weight:800;color:#4b4b4b;outline:none;
+  text-align:center;box-shadow:0 3px 0 #d7d7d7;user-select:text;
+}
+.timer-activity-input:focus{border-color:#58cc02;box-shadow:0 3px 0 #46a302,0 0 0 4px #d7ffb8;}
+.timer-activity-input::placeholder{color:#afafaf;font-weight:700;}
+
+/* 강사용 대형 키보드 */
+.keyboard-tool{padding:16px 18px 20px!important;gap:12px!important;}
+.kb-status{padding:4px 8px 8px!important;}
+.kb-current-key{font-size:3.2rem!important;min-height:3.8rem!important;line-height:3.8rem!important;}
+.kb-instruction{font-size:15px!important;font-weight:800!important;}
+.kb-container{padding:22px!important;border-radius:20px!important;}
+.kb-row{margin-bottom:8px!important;}
+.kb-key{
+  min-width:57px!important;height:63px!important;margin:4px!important;padding:7px 9px!important;
+  border-radius:10px!important;border-bottom-width:5px!important;font-size:17px!important;
+}
+.kb-key .eng{font-size:18px!important;font-weight:900!important;}
+.kb-key .kor{font-size:17px!important;font-weight:900!important;}
+.kb-key.special{font-size:15px!important;font-weight:900!important;}
+.kb-key.backspace{width:123px!important}.kb-key.tab{width:90px!important}.kb-key.capslock{width:108px!important}
+.kb-key.enter{width:117px!important}.kb-key.shift{width:147px!important}.kb-key.ctrl,.kb-key.win,.kb-key.alt{width:84px!important}
+.kb-key.space{width:405px!important}
+.kb-key.active{background:#ffc800!important;color:#4b4b4b!important;box-shadow:0 0 0 5px #fff2a8,0 6px 0 #d7a900!important;transform:translateY(5px)!important;}
+.kb-key.active .kor,.kb-key.active .eng{color:#4b4b4b!important;}
+
+/* 수업 링크 허브 */
+.links-tool{height:100%;display:flex;flex-direction:column;gap:18px;padding:6px;overflow:auto;background:#fff;}
+.links-intro{background:#f7fff0;border:2px solid #d7ffb8;border-radius:16px;padding:18px 20px;}
+.links-intro h2{font-size:24px;font-weight:1000;color:#3c3c3c;margin-bottom:6px;}
+.links-intro p{font-size:14px;font-weight:700;color:#777;line-height:1.6;}
+.links-grid{display:grid;grid-template-columns:repeat(2,minmax(260px,1fr));gap:16px;align-content:start;}
+@container (max-width:700px){.links-grid{grid-template-columns:1fr;}}
+.link-card{border:2px solid #e5e5e5;border-radius:16px;background:#fff;padding:18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 4px 0 #d7d7d7;}
+.link-card:hover{border-color:#58cc02;transform:translateY(-1px);box-shadow:0 5px 0 #46a302;}
+.link-card-head{display:flex;align-items:center;gap:10px;}
+.link-card-icon{width:42px;height:42px;border-radius:12px;background:#d7ffb8;color:#46a302;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:1000;}
+.link-card h3{font-size:18px;font-weight:1000;color:#3c3c3c;}
+.link-card p{font-size:13px;font-weight:700;color:#777;line-height:1.5;flex:1;}
+.link-open-btn{border:0;border-radius:12px;background:#58cc02;color:#fff;padding:11px 14px;font-family:inherit;font-size:14px;font-weight:1000;cursor:pointer;box-shadow:0 4px 0 #46a302;}
+.link-open-btn:hover{background:#61e002}.link-open-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #46a302;}
+
+</style>
+
+<style id="mina-final-overrides">
+  :root{--duo-green:#58cc02;--duo-dark:#46a302;--duo-light:#d7ffb8;--duo-blue:#1cb0f6;--duo-gray:#4b4b4b;}
+  .brand-mark{width:76px;height:34px;border-radius:10px;background:#58cc02!important;color:#fff!important;font-size:13px!important;font-weight:900!important;letter-spacing:.03em;transform:none!important;box-shadow:0 4px 0 #46a302!important;}
+  .credit-name{color:#58cc02!important;background:#f1ffe7;border:1px solid #b8f28d;padding:3px 9px;border-radius:999px;font-weight:900!important;}
+  .welcome-sub{font-size:22px!important;font-weight:900!important;color:#4b4b4b!important;gap:8px!important;letter-spacing:.01em;}
+  .welcome-divider{color:#afafaf;margin:0 3px}.welcome-brand{color:#58cc02;font-size:25px;}
+  .dock{background:#fff!important;border:3px solid #e5e5e5!important;box-shadow:0 10px 30px rgba(0,0,0,.18)!important;padding:12px 9px!important;gap:7px!important;}
+  .dock-item{width:54px!important;height:54px!important;background:#f7f7f7!important;color:#4b4b4b!important;border:2px solid #e5e5e5!important;box-shadow:0 3px 0 #d7d7d7!important;}
+  .dock-item svg{width:30px!important;height:30px!important;stroke-width:2.25;}
+  .dock-item:hover{background:#d7ffb8!important;color:#46a302!important;border-color:#8ee000!important;transform:translateX(5px) scale(1.07)!important;}
+  .dock-item.active{background:#58cc02!important;color:#fff!important;border-color:#46a302!important;box-shadow:0 4px 0 #46a302!important;}
+  .dock-item.active::after{background:#58cc02!important;right:-10px!important;width:7px!important;height:7px!important;}
+  .dock-tooltip{font-size:14px!important;font-weight:900!important;background:#4b4b4b!important;padding:7px 12px!important;}
+  .dock-tooltip::after{border-right-color:#4b4b4b!important;}
+  .dock-sep{background:#d7d7d7!important;height:2px!important;}
+  .site-footer{position:fixed;left:0;right:0;bottom:0;height:36px;z-index:45;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;border-top:2px solid #e5e5e5;color:#777;font-size:12px;font-weight:700;letter-spacing:.01em;}
+  .footer-sep{color:#c8c8c8}.workspace{height:calc(100vh - 96px)!important}.dock{max-height:calc(100vh - 112px)!important;}
+  .spinner-pointer{top:-8px!important;width:38px!important;height:48px!important;}
+  .spinner-result-name{font-size:27px!important;font-weight:900!important;}
+  @media(max-width:720px){.site-footer{font-size:10px;height:32px}.workspace{height:calc(100vh - 92px)!important}.credit-label,.credit-heart{display:none}.brand-sub{display:none}}
+</style>
+</head>
+<body>
+
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-card">
+      <span class="auth-badge" id="authBadge">관리자 전용</span>
+      <h2 id="authTitle">수업 도구함 잠금</h2>
+      <p id="authDesc">설정한 PIN을 입력해야 도구함을 열 수 있습니다.</p>
+      <input id="authPin" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="PIN 입력" />
+      <div class="auth-actions">
+        <button class="auth-submit" id="authSubmit" type="button">열기</button>
+        <button class="auth-reset" id="authReset" type="button" title="이 기기의 PIN 초기화">PIN 초기화</button>
+      </div>
+      <div class="auth-error" id="authError"></div>
+      <div class="auth-note">이 잠금은 현재 브라우저·기기에 저장되는 수업용 보호 기능입니다. 공개 배포 주소 자체를 완전히 차단하려면 Vercel 인증 또는 별도 로그인 서버가 필요합니다.</div>
+    </div>
+  </div>
+
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">DICOA</div>
+      <div><div class="brand-text">클래스온 수업도구함</div></div>
+      <span class="brand-sub">Classroom On Toolkit</span>
+    </div>
+    <div class="top-right">
+      <div class="clock-mini">
+        <span class="clock-dot"></span>
+        <span id="topClock">--:--:--</span>
+      </div>
+      <button class="lock-btn" id="lockNowBtn" type="button">잠그기</button>
+      <div class="credit">
+        <span class="credit-label">Made by</span>
+        <span class="credit-name">정미나 선생님</span>
+        <span class="credit-heart">❤</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="workspace" id="workspace">
+    <div class="welcome-deco tl">수업</div>
+    <div class="welcome-deco br">도구</div>
+    <div class="welcome" id="welcome">
+      <div class="welcome-title">수업을 켜다, <span class="accent">클래스온</span></div>
+      <div class="welcome-sub">
+        DICOA <span class="welcome-divider">×</span> MINA <span class="welcome-brand">ClassON</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dock" id="dock">
+    <button class="dock-item" data-tool="clock"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="dock-tooltip">시계</span></button>
+    <button class="dock-item" data-tool="timer"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M9 2h6M12 5v3M17.5 7.5l1.5-1.5"/></svg><span class="dock-tooltip">타이머</span></button>
+    <button class="dock-item" data-tool="whiteboard"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H4zM8 20h8M12 16v4"/><path d="M8 12l5-5 3 3-5 5H8z"/></svg><span class="dock-tooltip">화이트보드·손글씨</span></button>
+    <div class="dock-sep"></div>
+    <button class="dock-item" data-tool="groups"><svg viewBox="0 0 24 24" width="29" height="29" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="3"/><circle cx="5.5" cy="10" r="2.2"/><circle cx="18.5" cy="10" r="2.2"/><path d="M7 20v-2a5 5 0 0 1 10 0v2M2 20v-1.2a4 4 0 0 1 5-3.8M22 20v-1.2a4 4 0 0 0-5-3.8"/></svg><span class="dock-tooltip">모둠 만들기</span></button>
+    <button class="dock-item" data-tool="pairs"><svg viewBox="0 0 24 24" width="29" height="29" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 12l3 3a2 2 0 0 0 3 0l5-5M16 12l-3-3a2 2 0 0 0-3 0l-5 5"/><path d="M3 12l3-3M21 12l-3 3"/></svg><span class="dock-tooltip">매칭</span></button>
+    <button class="dock-item" data-tool="spinner"><svg viewBox="0 0 24 24" width="29" height="29" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v5M12 16v5M3 12h5M16 12h5"/></svg><span class="dock-tooltip">발표자 돌림판</span></button>
+    <div class="dock-sep"></div>
+    <button class="dock-item" data-tool="keyboard"><svg viewBox="0 0 24 24" width="29" height="29" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h1M10 9h1M14 9h1M18 9h1M6 13h1M10 13h1M14 13h1M18 13h1M7 16h10"/></svg><span class="dock-tooltip">키보드</span></button>
+    <button class="dock-item" data-tool="links"><svg viewBox="0 0 24 24" width="29" height="29" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"/><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1"/></svg><span class="dock-tooltip">수업 링크</span></button>
+    <button class="dock-item" data-tool="qr"><svg viewBox="0 0 24 24" width="29" height="29" fill="currentColor"><path d="M3 3h7v7H3V3zm2 2v3h3V5H5zm9-2h7v7h-7V3zm2 2v3h3V5h-3zM3 14h7v7H3v-7zm2 2v3h3v-3H5zm9-2h3v3h-3v-3zm4 0h3v3h-3v-3zm-4 4h3v3h-3v-3zm4 0h3v3h-3v-3z"/></svg><span class="dock-tooltip">QR 코드 생성기</span></button>
+  </div>
+
+  <footer class="site-footer">
+    <span>© 2026 DICOA × MINA. All rights reserved.</span>
+    <span class="footer-sep">|</span>
+    <span>ClassON Classroom Toolkit</span>
+  </footer>
+
+<script>
+  /* ===== 도구 정의 ===== */
+  const TOOLS = {
+    clock: {
+      title: '시계', icon: '🕐',
+      width: 560, height: 400,
+      content: () => `
+        <div class="clock-tool">
+          <div class="clock-greeting" data-clock-greeting>오늘도 좋은 하루 되세요</div>
+          <div class="clock-time">
+            <span data-clock-h>--</span><span class="colon">:</span><span data-clock-m>--</span><span class="sec-wrap"><span class="colon-s">:</span><span data-clock-s>--</span></span>
+          </div>
+          <div class="clock-date">
+            <span data-clock-date>--</span>
+          </div>
+          <div class="minute-progress"><div class="bar" data-clock-bar></div></div>
+        </div>`
+    },
+    timer: {
+      title: '타이머', icon: '⏱️', width: 520, height: 680,
+      content: () => `
+        <div class="timer-tool">
+          <div class="timer-activity-wrap">
+            <label>활동명</label>
+            <input class="timer-activity-input" data-timer-activity type="text" maxlength="40" placeholder="활동명을 입력하세요 (선택)">
+          </div>
+          <div class="timer-display">
+            <svg class="timer-ring" viewBox="0 0 200 200">
+              <circle class="timer-ring-bg" cx="100" cy="100" r="90"/>
+              <circle class="timer-ring-fg" cx="100" cy="100" r="90" data-timer-ring/>
+            </svg>
+            <div class="timer-center">
+              <div class="timer-time">
+                <span data-timer-min>05</span><span class="colon">:</span><span data-timer-sec>00</span>
+              </div>
+              <div class="timer-status" data-timer-status>준비됨</div>
+            </div>
+          </div>
+          <div class="timer-controls">
+            <button class="timer-btn primary" data-timer-action="toggle">
+              <span class="icon">▶</span><span data-btn-label>시작</span>
+            </button>
+            <button class="timer-btn icon-only" data-timer-action="reset" title="리셋">↻</button>
+          </div>
+          <div class="timer-presets">
+            <button class="timer-preset" data-preset="60">1분</button>
+            <button class="timer-preset" data-preset="180">3분</button>
+            <button class="timer-preset active" data-preset="300">5분</button>
+            <button class="timer-preset" data-preset="600">10분</button>
+            <button class="timer-preset" data-preset="900">15분</button>
+            <button class="timer-preset" data-preset="1800">30분</button>
+          </div>
+          <div class="timer-adjust">
+            <button data-adjust="-600">−10분</button>
+            <button data-adjust="-60">−1분</button>
+            <button data-adjust="-10">−10초</button>
+            <button data-adjust="10">+10초</button>
+            <button data-adjust="60">+1분</button>
+            <button data-adjust="600">+10분</button>
+          </div>
+        </div>`,
+      init: (win) => initTimer(win)
+    },
+    whiteboard: {
+      title: '화이트보드', icon: '✍', width: 840, height: 600,
+      content: () => `
+        <div class="whiteboard-tool">
+          <div class="wb-toolbar">
+            <div class="wb-tool-group">
+              <span class="wb-tool-label">도구</span>
+              <button class="wb-mode-btn active" data-wb-mode="pen">펜</button>
+              <button class="wb-mode-btn" data-wb-mode="eraser">지우개</button>
+              <button class="wb-mode-btn" data-wb-mode="text">텍스트</button>
+            </div>
+            <div class="wb-tool-group">
+              <span class="wb-tool-label">색</span>
+              <button class="wb-color-btn active" data-color="#4b4b4b" style="background:#4b4b4b" title="진한 회색"></button>
+              <button class="wb-color-btn" data-color="#58cc02" style="background:#58cc02" title="듀오링고 그린"></button>
+              <button class="wb-color-btn" data-color="#f59e0b" style="background:#f59e0b" title="골드"></button>
+              <button class="wb-color-btn" data-color="#10b981" style="background:#10b981" title="민트"></button>
+              <button class="wb-color-btn" data-color="#ef4444" style="background:#ef4444" title="빨강"></button>
+            </div>
+            <div class="wb-tool-group">
+              <span class="wb-tool-label">굵기</span>
+              <input class="wb-brush-range" type="range" min="2" max="24" value="5" data-wb-brush>
+              <span class="wb-tool-label" data-wb-brush-label>5px</span>
+            </div>
+            <div class="wb-tool-group right">
+              <button class="wb-action-btn" data-wb-action="add">+ 텍스트</button>
+              <button class="wb-action-btn" data-wb-action="undo">되돌리기</button>
+              <button class="wb-action-btn" data-wb-action="clear-drawing">그림 지우기</button>
+              <button class="wb-action-btn" data-wb-action="clear-text">글자 지우기</button>
+              <button class="wb-action-btn danger" data-wb-action="clear">모두 지우기</button>
+            </div>
+          </div>
+          <div class="wb-canvas pen-mode" data-wb-canvas>
+            <canvas class="wb-draw-canvas" data-wb-draw></canvas>
+            <div class="wb-hint">
+              <span class="wb-hint-icon">✍</span>
+              <span>마우스나 터치로 손글씨를 써보세요</span>
+              <span class="wb-hint-sub">펜과 텍스트 모드를 함께 사용할 수 있습니다</span>
+            </div>
+          </div>
+        </div>`,
+      init: (win) => initWhiteboard(win)
+    },
+    groups: { title: '모둠 만들기', icon: `<svg viewBox="0 0 40 30" width="1.4em" height="1.05em" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle"><circle cx="20" cy="7" r="4" fill="#58cc02"/><path d="M20 12 C13 12 10 19 10 28 L30 28 C30 19 27 12 20 12 Z" fill="#58cc02"/><circle cx="10" cy="11" r="3.5" fill="#fbbf24"/><path d="M10 15 C5 15 3 21 3 28 L17 28 C17 21 15 15 10 15 Z" fill="#fbbf24"/><circle cx="30" cy="11" r="3.5" fill="#34d399"/><path d="M30 15 C25 15 23 21 23 28 L37 28 C37 21 35 15 30 15 Z" fill="#34d399"/></svg>`, width: 740, height: 560,
+      content: () => `
+        <div class="groups-tool">
+          <div class="groups-view groups-setup" data-groups-view="setup">
+            <div class="groups-setup-grid">
+              <div class="groups-config">
+                <div class="config-section">
+                  <div class="config-label">방식</div>
+                  <div class="config-modes">
+                    <button class="config-mode-btn active" data-mode="groups">모둠 수</button>
+                    <button class="config-mode-btn" data-mode="perGroup">인원 수</button>
+                  </div>
+                </div>
+                <div class="config-section">
+                  <div class="config-label" data-count-label>모둠 개수</div>
+                  <div class="config-counter">
+                    <button class="counter-btn" data-counter="-">−</button>
+                    <input type="number" class="counter-input" data-count value="4" min="2" max="20"/>
+                    <button class="counter-btn" data-counter="+">+</button>
+                  </div>
+                </div>
+                <button class="groups-generate-btn" data-action="generate">🔀 모둠 만들기</button>
+              </div>
+              <div class="groups-input">
+                <div class="input-header">
+                  <div class="config-label">학생 이름 (줄바꿈 또는 쉼표로 구분)</div>
+                  <div class="input-count" data-input-count>0명</div>
+                </div>
+                <textarea class="students-textarea" data-students placeholder="줄바꿈 또는 쉼표로 구분하세요&#10;예시: 김철수, 이영희, 박민수"></textarea>
+                <div class="input-actions">
+                  <button class="input-action-btn" data-action="sample">예시 채우기</button>
+                  <button class="input-action-btn" data-action="clear">지우기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="groups-view groups-result hidden" data-groups-view="result">
+            <div class="groups-result-header">
+              <button class="result-back-btn" data-action="back">← 다시 입력</button>
+              <div class="result-info" data-result-info>—</div>
+              <button class="result-reshuffle-btn" data-action="reshuffle">🔀 다시 섞기</button>
+            </div>
+            <div class="groups-grid" data-groups-grid></div>
+          </div>
+        </div>`,
+      init: (win) => initGroups(win)
+    },
+    pairs: { title: '매칭', icon: '🤝', width: 720, height: 560,
+      content: () => `
+        <div class="match-tool">
+          <div class="match-view match-setup" data-match-view="setup">
+            <div class="match-setup-wrap">
+              <div class="match-setup-grid">
+                <div class="match-input-col">
+                  <div class="input-header">
+                    <div class="config-label">
+                      <span class="match-color-dot" style="background:#58cc02"></span>그룹 1
+                    </div>
+                    <div class="input-count" data-g1-count>0개</div>
+                  </div>
+                  <textarea class="students-textarea" data-g1 placeholder="줄바꿈 또는 쉼표로 구분&#10;예시:&#10;김민준&#10;이서윤"></textarea>
+                </div>
+                <div class="match-input-col">
+                  <div class="input-header">
+                    <div class="config-label">
+                      <span class="match-color-dot" style="background:#f59e0b"></span>그룹 2
+                    </div>
+                    <div class="input-count" data-g2-count>0개</div>
+                  </div>
+                  <textarea class="students-textarea" data-g2 placeholder="줄바꿈 또는 쉼표로 구분&#10;예시:&#10;교실 청소&#10;복도 청소"></textarea>
+                </div>
+              </div>
+              <div class="pairs-info">
+                <span class="pairs-info-icon">💡</span>
+                <span>각 그룹에서 하나씩 무작위로 매칭됩니다 · 개수가 다르면 남는 항목 표시</span>
+              </div>
+              <div class="match-actions-bar">
+                <div class="input-actions">
+                  <button class="input-action-btn" data-action="sample">예시 채우기</button>
+                  <button class="input-action-btn" data-action="clear">모두 지우기</button>
+                </div>
+                <button class="pairs-generate-btn" data-action="generate">🔗 매칭하기</button>
+              </div>
+            </div>
+          </div>
+          <div class="match-view match-result hidden" data-match-view="result">
+            <div class="pairs-result-header">
+              <button class="result-back-btn" data-action="back">← 다시 입력</button>
+              <div class="result-info" data-result-info>—</div>
+              <button class="result-reshuffle-btn" data-action="reshuffle">🔀 다시 섞기</button>
+            </div>
+            <div class="match-result-content">
+              <div class="match-grid" data-match-grid></div>
+              <div class="match-leftover hidden" data-leftover>
+                <div class="match-leftover-title" data-leftover-title>⚠ 매칭 안 된 항목</div>
+                <div class="match-leftover-items" data-leftover-items></div>
+              </div>
+            </div>
+          </div>
+        </div>`,
+      init: (win) => initMatch(win)
+    },
+    spinner: { title: '발표자 돌림판', icon: '🎯', width: 720, height: 580,
+      content: () => `
+        <div class="spinner-tool">
+          <div class="spinner-grid">
+            <div class="spinner-input-panel">
+              <div class="input-header">
+                <div class="config-label">명단</div>
+                <div class="input-count" data-input-count>0명</div>
+              </div>
+              <textarea class="students-textarea" data-students placeholder="줄바꿈 또는 쉼표로 구분&#10;예시: 김민준, 이서윤"></textarea>
+              <div class="input-actions">
+                <button class="input-action-btn" data-action="sample">예시 채우기</button>
+                <button class="input-action-btn" data-action="clear">지우기</button>
+                <button class="input-action-btn" data-action="restore">전체 복원</button>
+              </div>
+              <div class="spinner-options"><label class="spinner-check"><input type="checkbox" data-no-repeat checked> 뽑힌 학생 제외</label></div>
+              <div class="spinner-picked" data-picked-list>뽑힌 학생: 없음</div>
+            </div>
+            <div class="spinner-wheel-area">
+              <div class="spinner-wheel-wrap">
+                <svg class="spinner-pointer" viewBox="0 0 32 40">
+                  <path d="M 16 38 L 4 8 Q 4 2 10 2 L 22 2 Q 28 2 28 8 Z" fill="#4b4b4b" stroke="white" stroke-width="2"/>
+                  <circle cx="16" cy="10" r="3" fill="white"/>
+                </svg>
+                <svg class="spinner-wheel idle" data-wheel viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"></svg>
+              </div>
+              <div class="spinner-result" data-result>
+                <span class="spinner-result-label">결과:</span>
+                <span class="spinner-result-name" data-result-name>—</span>
+              </div>
+              <button class="spinner-spin-btn" data-action="spin">🎯 돌리기</button>
+            </div>
+          </div>
+        </div>`,
+      init: (win) => initSpinner(win)
+    },
+    links: { title: '수업 링크', icon: '🔗', width: 900, height: 700,
+      content: () => `
+        <div class="links-tool">
+          <div class="links-intro"><h2>수업 링크 바로가기</h2><p>수업 중 자주 사용하는 6개 서비스를 새 탭으로 엽니다. 마블룰렛, 클래스룸스크린, 패들렛, 캔바, joo.is, 캔슬 활동도구가 포함되어 있습니다.</p></div>
+          <div class="links-grid">
+            <div class="link-card"><div class="link-card-head"><div class="link-card-icon">R</div><h3>마블룰렛</h3></div><p>학생 순서, 발표 순서, 활동 항목을 룰렛으로 정합니다.</p><button class="link-open-btn" data-link-url="https://lazygyu.github.io/roulette/">열기</button></div>
+            <div class="link-card"><div class="link-card-head"><div class="link-card-icon">C</div><h3>클래스룸스크린</h3></div><p>타이머, 신호등, 텍스트, 작업 기호 등을 한 화면에 표시합니다.</p><button class="link-open-btn" data-link-url="https://classroomscreen.com/app/t/local-only-team-id/sd/2ebb5b00-bc3f-431a-91a8-9812b3648404/s/5fccaeb6-5274-45cb-b067-16118cb182e6">열기</button></div>
+            <div class="link-card"><div class="link-card-head"><div class="link-card-icon">P</div><h3>패들렛</h3></div><p>학생 의견, 이미지, 링크, 과제 결과물을 공동 게시판에 수집합니다.</p><button class="link-open-btn" data-link-url="https://padlet.com/dashboard/gallery?mobile_page=CollectionsMenu&audience=education">열기</button></div>
+            <div class="link-card"><div class="link-card-head"><div class="link-card-icon">C</div><h3>캔바</h3></div><p>수업 자료, 발표 자료, 포스터와 시각 콘텐츠를 제작합니다.</p><button class="link-open-btn" data-link-url="https://www.canva.com/">열기</button></div>
+            <div class="link-card"><div class="link-card-head"><div class="link-card-icon">J</div><h3>joo.is</h3></div><p>긴 링크를 짧게 줄이고 학생에게 공유하기 쉬운 주소를 만듭니다.</p><button class="link-open-btn" data-link-url="https://joo.is/en/">열기</button></div>
+            <div class="link-card"><div class="link-card-head"><div class="link-card-icon">A</div><h3>캔슬 활동도구</h3></div><p>수업 활동에 활용할 수 있는 다양한 참여형 도구를 실행합니다.</p><button class="link-open-btn" data-link-url="https://cansle.dothome.co.kr/#activity">열기</button></div>
+          </div>
+        </div>`,
+      init: (win) => {
+        win.querySelectorAll('[data-link-url]').forEach(btn => btn.addEventListener('click', () => window.open(btn.dataset.linkUrl, '_blank', 'noopener,noreferrer')));
+      }
+    },
+    qr: { title: 'QR 코드 생성기', icon: '📱', width: 760, height: 650,
+      content: () => `
+        <div class="qr-pro">
+          <div class="qr-pro-scroll">
+            <div class="qr-pro-grid">
+              <div class="qr-panel">
+                <div class="qr-panel-title">QR 설정 · 입력 내용은 저장되지 않습니다</div>
+                <div class="qr-field"><label>URL 또는 텍스트</label><input type="url" data-qr-url placeholder="https://example.com"></div>
+                <div class="qr-field"><label>하단 제목 <span>선택사항</span></label><input type="text" data-qr-title placeholder="비워두면 제목 없이 생성됩니다"></div>
+                <div class="qr-field">
+                  <label>QR 색상</label>
+                  <div class="qr-color-grid">
+                    <div class="qr-color"><input type="color" data-qr-dark value="#4b4b4b"><span data-qr-dark-hex>#4b4b4b</span></div>
+                    <div class="qr-color"><input type="color" data-qr-light value="#ffffff"><span data-qr-light-hex>#ffffff</span></div>
+                  </div>
+                  <div class="qr-presets" data-qr-presets></div>
+                </div>
+                <div class="qr-toggle-row"><label>중앙 텍스트 오버레이</label><input type="checkbox" data-qr-overlay-toggle></div>
+                <div class="qr-overlay-options hidden" data-qr-overlay-options>
+                  <div class="qr-field"><label>표시할 단어 <span data-qr-count>0 / 8</span></label><input type="text" maxlength="8" data-qr-overlay-text placeholder="예: 수업명, 브랜드명"></div>
+                  <div class="qr-color-grid qr-field">
+                    <div><label style="font-size:11px;font-weight:800;color:var(--ink-soft)">글자색</label><div class="qr-color"><input type="color" data-qr-overlay-color value="#c0392b"><span data-qr-overlay-color-hex>#c0392b</span></div></div>
+                    <div><label style="font-size:11px;font-weight:800;color:var(--ink-soft)">배경색</label><div class="qr-color"><input type="color" data-qr-overlay-bg value="#ffffff"><span data-qr-overlay-bg-hex>#ffffff</span></div></div>
+                  </div>
+                  <div class="qr-field"><label>글자 크기 <span data-qr-font-label>22px</span></label><input class="qr-range" type="range" min="12" max="40" value="22" data-qr-font></div>
+                </div>
+              </div>
+              <div class="qr-panel">
+                <div class="qr-panel-title">미리보기</div>
+                <div class="qr-preview-box" data-qr-preview-box>
+                  <div class="qr-render-wrap" data-qr-render-wrap><div data-qr-code></div><div class="qr-overlay-live" data-qr-overlay-live hidden></div></div>
+                  <div class="qr-preview-title" data-qr-preview-title></div>
+                  <div class="qr-preview-hint" data-qr-preview-hint>URL 또는 텍스트를 입력하고 생성하세요.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="qr-actions"><button class="qr-btn primary" data-qr-generate>QR 생성</button><button class="qr-btn" data-qr-download disabled>PNG 저장</button></div>
+        </div>`,
+      init: (win) => initQRPro(win) },
+    keyboard: { title: '키보드', icon: '⌨️', width: 1080, height: 720,
+      content: () => `
+        <div class="keyboard-tool">
+          <div class="kb-status">
+            <div class="kb-current-key" data-kb-display>READY</div>
+            <div class="kb-instruction">학생에게 보여줄 키를 누르세요. 최근 입력이 아래에 순서대로 표시됩니다.</div>
+            <div class="kb-history" data-kb-history></div>
+          </div>
+          <div class="kb-stage" data-kb-stage><div class="kb-container" data-kb-container>
+            <div class="kb-row">
+              <div class="kb-key" data-key="Backquote"><span class="eng">~</span><span class="kor">\`</span></div>
+              <div class="kb-key" data-key="Digit1"><span class="eng">!</span><span class="kor">1</span></div>
+              <div class="kb-key" data-key="Digit2"><span class="eng">@</span><span class="kor">2</span></div>
+              <div class="kb-key" data-key="Digit3"><span class="eng">#</span><span class="kor">3</span></div>
+              <div class="kb-key" data-key="Digit4"><span class="eng">$</span><span class="kor">4</span></div>
+              <div class="kb-key" data-key="Digit5"><span class="eng">%</span><span class="kor">5</span></div>
+              <div class="kb-key" data-key="Digit6"><span class="eng">^</span><span class="kor">6</span></div>
+              <div class="kb-key" data-key="Digit7"><span class="eng">&amp;</span><span class="kor">7</span></div>
+              <div class="kb-key" data-key="Digit8"><span class="eng">*</span><span class="kor">8</span></div>
+              <div class="kb-key" data-key="Digit9"><span class="eng">(</span><span class="kor">9</span></div>
+              <div class="kb-key" data-key="Digit0"><span class="eng">)</span><span class="kor">0</span></div>
+              <div class="kb-key" data-key="Minus"><span class="eng">_</span><span class="kor">-</span></div>
+              <div class="kb-key" data-key="Equal"><span class="eng">+</span><span class="kor">=</span></div>
+              <div class="kb-key special backspace" data-key="Backspace">Backspace</div>
+            </div>
+            <div class="kb-row">
+              <div class="kb-key special tab" data-key="Tab">Tab</div>
+              <div class="kb-key" data-key="KeyQ"><span class="eng">Q</span><span class="kor">ㅂ</span></div>
+              <div class="kb-key" data-key="KeyW"><span class="eng">W</span><span class="kor">ㅈ</span></div>
+              <div class="kb-key" data-key="KeyE"><span class="eng">E</span><span class="kor">ㄷ</span></div>
+              <div class="kb-key" data-key="KeyR"><span class="eng">R</span><span class="kor">ㄱ</span></div>
+              <div class="kb-key" data-key="KeyT"><span class="eng">T</span><span class="kor">ㅅ</span></div>
+              <div class="kb-key" data-key="KeyY"><span class="eng">Y</span><span class="kor">ㅛ</span></div>
+              <div class="kb-key" data-key="KeyU"><span class="eng">U</span><span class="kor">ㅕ</span></div>
+              <div class="kb-key" data-key="KeyI"><span class="eng">I</span><span class="kor">ㅑ</span></div>
+              <div class="kb-key" data-key="KeyO"><span class="eng">O</span><span class="kor">ㅐ</span></div>
+              <div class="kb-key" data-key="KeyP"><span class="eng">P</span><span class="kor">ㅔ</span></div>
+              <div class="kb-key" data-key="BracketLeft"><span class="eng">{</span><span class="kor">[</span></div>
+              <div class="kb-key" data-key="BracketRight"><span class="eng">}</span><span class="kor">]</span></div>
+              <div class="kb-key" data-key="Backslash"><span class="eng">|</span><span class="kor">\\</span></div>
+            </div>
+            <div class="kb-row">
+              <div class="kb-key special capslock" data-key="CapsLock">Caps</div>
+              <div class="kb-key" data-key="KeyA"><span class="eng">A</span><span class="kor">ㅁ</span></div>
+              <div class="kb-key" data-key="KeyS"><span class="eng">S</span><span class="kor">ㄴ</span></div>
+              <div class="kb-key" data-key="KeyD"><span class="eng">D</span><span class="kor">ㅇ</span></div>
+              <div class="kb-key" data-key="KeyF"><span class="eng">F</span><span class="kor">ㄹ</span></div>
+              <div class="kb-key" data-key="KeyG"><span class="eng">G</span><span class="kor">ㅎ</span></div>
+              <div class="kb-key" data-key="KeyH"><span class="eng">H</span><span class="kor">ㅗ</span></div>
+              <div class="kb-key" data-key="KeyJ"><span class="eng">J</span><span class="kor">ㅓ</span></div>
+              <div class="kb-key" data-key="KeyK"><span class="eng">K</span><span class="kor">ㅏ</span></div>
+              <div class="kb-key" data-key="KeyL"><span class="eng">L</span><span class="kor">ㅣ</span></div>
+              <div class="kb-key" data-key="Semicolon"><span class="eng">:</span><span class="kor">;</span></div>
+              <div class="kb-key" data-key="Quote"><span class="eng">&quot;</span><span class="kor">'</span></div>
+              <div class="kb-key special enter" data-key="Enter">Enter</div>
+            </div>
+            <div class="kb-row">
+              <div class="kb-key special shift" data-key="ShiftLeft">Shift</div>
+              <div class="kb-key" data-key="KeyZ"><span class="eng">Z</span><span class="kor">ㅋ</span></div>
+              <div class="kb-key" data-key="KeyX"><span class="eng">X</span><span class="kor">ㅌ</span></div>
+              <div class="kb-key" data-key="KeyC"><span class="eng">C</span><span class="kor">ㅊ</span></div>
+              <div class="kb-key" data-key="KeyV"><span class="eng">V</span><span class="kor">ㅍ</span></div>
+              <div class="kb-key" data-key="KeyB"><span class="eng">B</span><span class="kor">ㅠ</span></div>
+              <div class="kb-key" data-key="KeyN"><span class="eng">N</span><span class="kor">ㅜ</span></div>
+              <div class="kb-key" data-key="KeyM"><span class="eng">M</span><span class="kor">ㅡ</span></div>
+              <div class="kb-key" data-key="Comma"><span class="eng">&lt;</span><span class="kor">,</span></div>
+              <div class="kb-key" data-key="Period"><span class="eng">&gt;</span><span class="kor">.</span></div>
+              <div class="kb-key" data-key="Slash"><span class="eng">?</span><span class="kor">/</span></div>
+              <div class="kb-key special shift" data-key="ShiftRight">Shift</div>
+            </div>
+            <div class="kb-row">
+              <div class="kb-key special ctrl" data-key="ControlLeft">Ctrl</div>
+              <div class="kb-key special win" data-key="MetaLeft">Win</div>
+              <div class="kb-key special alt" data-key="AltLeft">Alt</div>
+              <div class="kb-key special space" data-key="Space">Space</div>
+              <div class="kb-key special alt" data-key="AltRight">한/영</div>
+              <div class="kb-key special win" data-key="MetaRight">한자</div>
+              <div class="kb-key special ctrl" data-key="ControlRight">Ctrl</div>
+            </div>
+          </div>
+          </div>
+        </div>
+      `,
+      init: (win) => initKeyboard(win) }
+
+  };
+  
+  function phHTML(icon, title, desc, step) {
+    return `<div class="ph">
+      <div class="ph-icon">${icon}</div>
+      <div class="ph-title">${title}</div>
+      <div class="ph-desc">${desc}</div>
+      <div class="ph-badge">${step}단계 예정</div>
+    </div>`;
+  }
+  
+  /* ===== 창 관리 ===== */
+  const openWindows = {};
+  let topZ = 100;
+  let cascadeIdx = 0;
+  
+  function getNextPosition(w, h) {
+    const ws = document.getElementById('workspace');
+    const r = ws.getBoundingClientRect();
+    const baseX = 100, baseY = 30;
+    const offset = (cascadeIdx % 6) * 36;
+    let x = baseX + offset;
+    let y = baseY + offset;
+    const maxY = r.height - h - 110;
+    const maxX = r.width - w - 30;
+    if (y > maxY) y = Math.max(20, maxY);
+    if (x > maxX) x = Math.max(20, maxX);
+    cascadeIdx++;
+    return { x, y };
+  }
+  
+  function bringToFront(win) {
+    topZ++;
+    win.style.zIndex = topZ;
+  }
+  
+  function openTool(toolId) {
+    if (openWindows[toolId]) {
+      closeTool(toolId);
+      return;
+    }
+    const tool = TOOLS[toolId];
+    const win = document.createElement('div');
+    win.className = 'window';
+    win.dataset.tool = toolId;
+    win.style.width = tool.width + 'px';
+    win.style.height = tool.height + 'px';
+    const pos = getNextPosition(tool.width, tool.height);
+    win.style.left = pos.x + 'px';
+    win.style.top = pos.y + 'px';
+    win.style.zIndex = ++topZ;
+    
+    win.innerHTML = `
+      <div class="window-header">
+        <span class="window-icon">${tool.icon}</span>
+        <span class="window-title">${tool.title}</span>
+        <div class="window-actions">
+          <button class="window-action maximize" title="전체 화면">□</button>
+          <button class="window-action close" title="닫기">✕</button>
+        </div>
+      </div>
+      <div class="window-content">${tool.content()}</div>
+      <div class="resize-handle e" data-resize="e"></div>
+      <div class="resize-handle s" data-resize="s"></div>
+      <div class="resize-handle se" data-resize="se"></div>
+    `;
+    
+    document.getElementById('workspace').appendChild(win);
+    openWindows[toolId] = win;
+    
+    win.querySelector('.close').addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeTool(toolId);
+    });
+    win.querySelector('.maximize').addEventListener('click', (e) => {
+      e.stopPropagation();
+      win.classList.toggle('maximized');
+      const btn = e.currentTarget;
+      btn.textContent = win.classList.contains('maximized') ? '❐' : '□';
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 30);
+    });
+    
+    win.addEventListener('mousedown', () => bringToFront(win));
+    win.addEventListener('touchstart', () => bringToFront(win), { passive: true });
+    
+    makeDraggable(win, win.querySelector('.window-header'));
+    win.querySelectorAll('.resize-handle').forEach(h => makeResizable(win, h, h.dataset.resize));
+    
+    if (tool.init) tool.init(win);
+    
+    updateDock();
+    updateWelcome();
+  }
+  
+  function closeTool(toolId) {
+    const win = openWindows[toolId];
+    if (!win) return;
+    if (win._cleanup) win._cleanup();
+    win.classList.add('closing');
+    setTimeout(() => {
+      win.remove();
+      delete openWindows[toolId];
+      updateDock();
+      updateWelcome();
+    }, 180);
+  }
+  
+  function updateDock() {
+    document.querySelectorAll('.dock-item').forEach(item => {
+      item.classList.toggle('active', !!openWindows[item.dataset.tool]);
+    });
+  }
+  
+  function updateWelcome() {
+    const anyOpen = Object.keys(openWindows).length > 0;
+    document.getElementById('welcome').classList.toggle('hidden', anyOpen);
+  }
+  
+  /* ===== 드래그 (마우스 + 터치) ===== */
+  function makeDraggable(win, handle) {
+    let dragging = false;
+    let startX, startY, initLeft, initTop;
+    
+    function getPoint(e) {
+      if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      return { x: e.clientX, y: e.clientY };
+    }
+    
+    function start(e) {
+      if (e.target.closest('.window-action')) return;
+      dragging = true;
+      const p = getPoint(e);
+      startX = p.x; startY = p.y;
+      initLeft = win.offsetLeft;
+      initTop = win.offsetTop;
+      handle.classList.add('dragging');
+      bringToFront(win);
+      if (e.cancelable) e.preventDefault();
+    }
+    
+    function move(e) {
+      if (!dragging) return;
+      const p = getPoint(e);
+      const ws = document.getElementById('workspace').getBoundingClientRect();
+      let nx = initLeft + (p.x - startX);
+      let ny = initTop + (p.y - startY);
+      nx = Math.max(0, Math.min(nx, ws.width - 60));
+      ny = Math.max(0, Math.min(ny, ws.height - 50));
+      win.style.left = nx + 'px';
+      win.style.top = ny + 'px';
+    }
+    
+    function end() {
+      if (!dragging) return;
+      dragging = false;
+      handle.classList.remove('dragging');
+    }
+    
+    handle.addEventListener('mousedown', start);
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', end);
+    handle.addEventListener('touchstart', start, { passive: false });
+    document.addEventListener('touchmove', move, { passive: false });
+    document.addEventListener('touchend', end);
+  }
+  
+  /* ===== 크기 조절 (마우스 + 터치) ===== */
+  function makeResizable(win, handle, dir) {
+    let resizing = false;
+    let startX, startY, initW, initH;
+    const MIN_W = 320, MIN_H = 220;
+    
+    function getPoint(e) {
+      if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      return { x: e.clientX, y: e.clientY };
+    }
+    
+    function start(e) {
+      resizing = true;
+      const p = getPoint(e);
+      startX = p.x; startY = p.y;
+      initW = win.offsetWidth;
+      initH = win.offsetHeight;
+      bringToFront(win);
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+    }
+    
+    function move(e) {
+      if (!resizing) return;
+      const p = getPoint(e);
+      const dx = p.x - startX;
+      const dy = p.y - startY;
+      const ws = document.getElementById('workspace').getBoundingClientRect();
+      const left = win.offsetLeft;
+      const top = win.offsetTop;
+      
+      if (dir.includes('e')) {
+        let newW = Math.max(MIN_W, initW + dx);
+        newW = Math.min(newW, ws.width - left - 10);
+        win.style.width = newW + 'px';
+      }
+      if (dir.includes('s')) {
+        let newH = Math.max(MIN_H, initH + dy);
+        newH = Math.min(newH, ws.height - top - 10);
+        win.style.height = newH + 'px';
+      }
+    }
+    
+    function end() {
+      resizing = false;
+    }
+    
+    handle.addEventListener('mousedown', start);
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', end);
+    handle.addEventListener('touchstart', start, { passive: false });
+    document.addEventListener('touchmove', move, { passive: false });
+    document.addEventListener('touchend', end);
+  }
+  
+  /* ===== 타이머 ===== */
+  function initTimer(win) {
+    win._timerState = {
+      totalMs: 5 * 60 * 1000,
+      remainingMs: 5 * 60 * 1000,
+      isRunning: false,
+      intervalId: null,
+      lastTick: null,
+      complete: false,
+    };
+    
+    win._cleanup = () => {
+      if (win._timerState && win._timerState.intervalId) {
+        clearInterval(win._timerState.intervalId);
+      }
+    };
+    
+    win.querySelector('[data-timer-action="toggle"]').addEventListener('click', () => toggleTimer(win));
+    win.querySelector('[data-timer-action="reset"]').addEventListener('click', () => resetTimer(win));
+    
+    win.querySelectorAll('[data-preset]').forEach(btn => {
+      btn.addEventListener('click', () => setTimerPreset(win, parseInt(btn.dataset.preset)));
+    });
+    
+    win.querySelectorAll('[data-adjust]').forEach(btn => {
+      btn.addEventListener('click', () => adjustTimer(win, parseInt(btn.dataset.adjust)));
+    });
+    
+    updateTimerDisplay(win);
+  }
+  
+  function updateTimerDisplay(win) {
+    const s = win._timerState;
+    const totalSec = Math.max(0, Math.ceil(s.remainingMs / 1000));
+    const min = Math.floor(totalSec / 60);
+    const sec = totalSec % 60;
+    
+    const minEl = win.querySelector('[data-timer-min]');
+    const secEl = win.querySelector('[data-timer-sec]');
+    if (minEl) minEl.textContent = pad(min);
+    if (secEl) secEl.textContent = pad(sec);
+    
+    // 원형 게이지
+    const ring = win.querySelector('[data-timer-ring]');
+    if (ring) {
+      const C = 2 * Math.PI * 90;
+      const progress = s.totalMs > 0 ? Math.max(0, Math.min(1, s.remainingMs / s.totalMs)) : 0;
+      ring.style.strokeDasharray = C;
+      ring.style.strokeDashoffset = C * (1 - progress);
+    }
+    
+    // 상태 클래스
+    const tool = win.querySelector('.timer-tool');
+    tool.classList.remove('warning', 'danger', 'complete');
+    
+    const statusEl = win.querySelector('[data-timer-status]');
+    if (s.complete) {
+      if (statusEl) statusEl.textContent = '완료!';
+      tool.classList.add('complete');
+    } else if (s.isRunning) {
+      if (statusEl) statusEl.textContent = '진행 중';
+      if (s.remainingMs <= 3000) tool.classList.add('danger');
+      else if (s.remainingMs <= 10000) tool.classList.add('warning');
+    } else if (s.remainingMs < s.totalMs && s.remainingMs > 0) {
+      if (statusEl) statusEl.textContent = '일시정지';
+    } else {
+      if (statusEl) statusEl.textContent = '준비됨';
+    }
+    
+    // 버튼 라벨
+    const btn = win.querySelector('[data-timer-action="toggle"]');
+    if (btn) {
+      const iconEl = btn.querySelector('.icon');
+      const labelEl = btn.querySelector('[data-btn-label]');
+      if (s.complete) {
+        iconEl.textContent = '↻'; labelEl.textContent = '다시';
+      } else if (s.isRunning) {
+        iconEl.textContent = '⏸'; labelEl.textContent = '일시정지';
+      } else if (s.remainingMs < s.totalMs && s.remainingMs > 0) {
+        iconEl.textContent = '▶'; labelEl.textContent = '계속';
+      } else {
+        iconEl.textContent = '▶'; labelEl.textContent = '시작';
+      }
+    }
+  }
+  
+  function toggleTimer(win) {
+    const s = win._timerState;
+    if (s.complete) {
+      s.complete = false;
+      s.remainingMs = s.totalMs;
+      startTimer(win);
+    } else if (s.isRunning) {
+      pauseTimer(win);
+    } else {
+      startTimer(win);
+    }
+  }
+  
+  function startTimer(win) {
+    const s = win._timerState;
+    if (s.remainingMs <= 0) return;
+    
+    s.isRunning = true;
+    s.lastTick = Date.now();
+    
+    s.intervalId = setInterval(() => {
+      const now = Date.now();
+      const elapsed = now - s.lastTick;
+      s.lastTick = now;
+      s.remainingMs -= elapsed;
+      
+      if (s.remainingMs <= 0) {
+        s.remainingMs = 0;
+        s.isRunning = false;
+        s.complete = true;
+        clearInterval(s.intervalId);
+        s.intervalId = null;
+        playAlarm();
+      }
+      
+      updateTimerDisplay(win);
+    }, 100);
+    
+    updateTimerDisplay(win);
+  }
+  
+  function pauseTimer(win) {
+    const s = win._timerState;
+    s.isRunning = false;
+    if (s.intervalId) {
+      clearInterval(s.intervalId);
+      s.intervalId = null;
+    }
+    updateTimerDisplay(win);
+  }
+  
+  function resetTimer(win) {
+    const s = win._timerState;
+    s.isRunning = false;
+    s.complete = false;
+    if (s.intervalId) {
+      clearInterval(s.intervalId);
+      s.intervalId = null;
+    }
+    s.remainingMs = s.totalMs;
+    updateTimerDisplay(win);
+  }
+  
+  function setTimerPreset(win, seconds) {
+    const s = win._timerState;
+    s.isRunning = false;
+    s.complete = false;
+    if (s.intervalId) {
+      clearInterval(s.intervalId);
+      s.intervalId = null;
+    }
+    s.totalMs = seconds * 1000;
+    s.remainingMs = s.totalMs;
+    
+    win.querySelectorAll('[data-preset]').forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.dataset.preset) === seconds);
+    });
+    
+    updateTimerDisplay(win);
+  }
+  
+  function adjustTimer(win, deltaSec) {
+    const s = win._timerState;
+    if (s.complete) {
+      s.complete = false;
+    }
+    
+    const isActive = s.isRunning || (s.remainingMs > 0 && s.remainingMs < s.totalMs);
+    if (isActive) {
+      s.remainingMs = Math.max(0, s.remainingMs + deltaSec * 1000);
+      if (s.remainingMs > s.totalMs) s.totalMs = s.remainingMs;
+    } else {
+      s.totalMs = Math.max(1000, s.totalMs + deltaSec * 1000);
+      s.remainingMs = s.totalMs;
+    }
+    
+    const currentSec = Math.round(s.totalMs / 1000);
+    win.querySelectorAll('[data-preset]').forEach(btn => {
+      btn.classList.toggle('active', !isActive && parseInt(btn.dataset.preset) === currentSec);
+    });
+    
+    updateTimerDisplay(win);
+  }
+  
+  /* ===== 알람 사운드 (Web Audio API) ===== */
+  let audioCtx = null;
+  function playAlarm() {
+    try {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const beep = (delay, freq = 880, duration = 0.25, vol = 0.35) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        const t = audioCtx.currentTime + delay;
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(vol, t + 0.02);
+        gain.gain.linearRampToValueAtTime(0, t + duration);
+        osc.start(t);
+        osc.stop(t + duration);
+      };
+      // 띵-띵-띠링!
+      beep(0,    880, 0.18);
+      beep(0.25, 880, 0.18);
+      beep(0.55, 1175, 0.45);
+    } catch (e) {
+      console.warn('Audio error:', e);
+    }
+  }
+  
+  /* ===== 화이트보드 ===== */
+  const WB_DEFAULT_SIZE = 30; // px
+  
+  function initWhiteboard(win) {
+    win._wbState = { activeBox:null, defaultColor:'#4b4b4b', nextId:1, mode:'pen', brush:5, history:[] };
+    const board = win.querySelector('[data-wb-canvas]');
+    const draw = win.querySelector('[data-wb-draw]');
+    const ctx = draw.getContext('2d');
+    let drawing = false, last = null;
+
+    function snapshot(){
+      try { win._wbState.history.push(draw.toDataURL()); if(win._wbState.history.length>25) win._wbState.history.shift(); } catch(e){}
+    }
+    function resizeDraw(){
+      const w=Math.max(1,board.clientWidth), h=Math.max(1,board.clientHeight);
+      if(draw.width===w && draw.height===h) return;
+      const old=document.createElement('canvas'); old.width=draw.width||w; old.height=draw.height||h;
+      if(draw.width&&draw.height) old.getContext('2d').drawImage(draw,0,0);
+      draw.width=w; draw.height=h; ctx.lineCap='round'; ctx.lineJoin='round';
+      if(old.width&&old.height) ctx.drawImage(old,0,0,old.width,old.height,0,0,w,h);
+    }
+    requestAnimationFrame(resizeDraw);
+    const ro=new ResizeObserver(resizeDraw); ro.observe(board);
+
+    function point(e){ const r=draw.getBoundingClientRect(); const p=e.touches?e.touches[0]:e; return {x:(p.clientX-r.left)*(draw.width/r.width),y:(p.clientY-r.top)*(draw.height/r.height)}; }
+    function start(e){ if(!['pen','eraser'].includes(win._wbState.mode)) return; snapshot(); drawing=true; last=point(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); e.preventDefault(); updateWbHint(win); }
+    function move(e){ if(!drawing) return; const p=point(e); ctx.globalCompositeOperation = win._wbState.mode==='eraser' ? 'destination-out' : 'source-over'; ctx.strokeStyle=win._wbState.defaultColor; ctx.lineWidth=win._wbState.mode==='eraser' ? Math.max(18,win._wbState.brush*3) : win._wbState.brush; ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; e.preventDefault(); }
+    function end(){ if(!drawing) return; drawing=false; ctx.closePath(); updateWbHint(win); }
+    draw.addEventListener('pointerdown',start); draw.addEventListener('pointermove',move); window.addEventListener('pointerup',end);
+
+    board.addEventListener('click', (e) => {
+      if (win._wbState.mode !== 'text' || e.target.closest('.wb-textbox')) return;
+      const rect = board.getBoundingClientRect();
+      createTextbox(win, e.clientX-rect.left+board.scrollLeft, e.clientY-rect.top+board.scrollTop);
+    });
+
+    win.querySelectorAll('[data-wb-mode]').forEach(btn=>btn.addEventListener('click',()=>{
+      win._wbState.mode=btn.dataset.wbMode;
+      win.querySelectorAll('[data-wb-mode]').forEach(b=>b.classList.toggle('active',b===btn));
+      board.classList.toggle('pen-mode',win._wbState.mode==='pen');
+      board.classList.toggle('text-mode',win._wbState.mode==='text');
+      board.classList.toggle('eraser-mode',win._wbState.mode==='eraser');
+      updateWbHint(win);
+    }));
+
+    const brush=win.querySelector('[data-wb-brush]');
+    brush.addEventListener('input',()=>{ win._wbState.brush=Number(brush.value); win.querySelector('[data-wb-brush-label]').textContent=brush.value+'px'; });
+
+    win.querySelectorAll('[data-color]').forEach(btn => btn.addEventListener('click', () => {
+      win._wbState.defaultColor = btn.dataset.color;
+      win.querySelectorAll('[data-color]').forEach(b => b.classList.toggle('active', b === btn));
+      if (win._wbState.activeBox) applyWbColor(win._wbState.activeBox, btn.dataset.color);
+    }));
+
+    win.querySelector('[data-wb-action="add"]').addEventListener('click', () => {
+      win._wbState.mode='text';
+      win.querySelectorAll('[data-wb-mode]').forEach(b=>b.classList.toggle('active',b.dataset.wbMode==='text'));
+      board.classList.remove('pen-mode'); board.classList.add('text-mode');
+      createTextbox(win, board.scrollLeft+board.clientWidth/2-60, board.scrollTop+board.clientHeight/2-20);
+    });
+
+    win.querySelector('[data-wb-action="undo"]').addEventListener('click',()=>{
+      const src=win._wbState.history.pop(); if(!src) return;
+      const img=new Image(); img.onload=()=>{ctx.clearRect(0,0,draw.width,draw.height);ctx.drawImage(img,0,0,draw.width,draw.height);updateWbHint(win);}; img.src=src;
+    });
+
+    win.querySelector('[data-wb-action="clear-drawing"]').addEventListener('click', () => {
+      snapshot();
+      ctx.save(); ctx.globalCompositeOperation='source-over'; ctx.clearRect(0,0,draw.width,draw.height); ctx.restore();
+      updateWbHint(win);
+    });
+    win.querySelector('[data-wb-action="clear-text"]').addEventListener('click', () => {
+      board.querySelectorAll('.wb-textbox').forEach(x=>x.remove());
+      win._wbState.activeBox=null; updateWbHint(win);
+    });
+
+    win.querySelector('[data-wb-action="clear"]').addEventListener('click', () => {
+      const boxes=board.querySelectorAll('.wb-textbox');
+      if(!boxes.length && win._wbState.history.length===0) { /* 빈 캔버스일 수 있으므로 그대로 확인 가능 */ }
+      if(confirm('손글씨와 텍스트를 모두 지울까요?')){ snapshot(); ctx.save(); ctx.globalCompositeOperation='source-over'; ctx.clearRect(0,0,draw.width,draw.height); ctx.restore(); boxes.forEach(x=>x.remove()); win._wbState.activeBox=null; updateWbHint(win); }
+    });
+
+    win._cleanup = () => { ro.disconnect(); window.removeEventListener('pointerup',end); };
+  }
+  
+  function createTextbox(win, x, y) {
+    const canvas = win.querySelector('[data-wb-canvas]');
+    const id = 'tb_' + (win._wbState.nextId++);
+    
+    const tb = document.createElement('div');
+    tb.className = 'wb-textbox';
+    tb.dataset.tbId = id;
+    tb.style.left = x + 'px';
+    tb.style.top = y + 'px';
+    
+    tb.innerHTML = `
+      <div class="wb-textbox-handle" data-tb-handle></div>
+      <button class="wb-textbox-delete" data-tb-delete title="삭제">✕</button>
+      <div class="wb-textbox-content" contenteditable="true"></div>
+      <div class="wb-textbox-side l" data-tb-side="l"></div>
+      <div class="wb-textbox-side r" data-tb-side="r"></div>
+      <div class="wb-textbox-resize tl" data-tb-resize="tl"></div>
+      <div class="wb-textbox-resize tr" data-tb-resize="tr"></div>
+      <div class="wb-textbox-resize bl" data-tb-resize="bl"></div>
+      <div class="wb-textbox-resize br" data-tb-resize="br"></div>
+    `;
+    
+    const content = tb.querySelector('.wb-textbox-content');
+    content.style.fontSize = WB_DEFAULT_SIZE + 'px';
+    applyWbColor(tb, win._wbState.defaultColor);
+    
+    canvas.appendChild(tb);
+    
+    // 박스 본체 클릭 → 편집 시작
+    tb.addEventListener('mousedown', (e) => {
+      if (e.target.closest('[data-tb-delete]')) return;
+      if (e.target.closest('[data-tb-handle]')) return;
+      if (e.target.closest('[data-tb-resize]')) return;
+      if (e.target.closest('[data-tb-side]')) return;
+      e.stopPropagation();
+    });
+    tb.addEventListener('click', (e) => {
+      if (e.target.closest('[data-tb-delete]')) return;
+      if (e.target.closest('[data-tb-handle]')) return;
+      if (e.target.closest('[data-tb-resize]')) return;
+      if (e.target.closest('[data-tb-side]')) return;
+      e.stopPropagation();
+      content.focus();
+    });
+    
+    // 포커스
+    content.addEventListener('focus', () => {
+      tb.classList.add('editing');
+      win._wbState.activeBox = tb;
+    });
+    
+    // 블러 - 비어있으면 자동 삭제
+    content.addEventListener('blur', () => {
+      tb.classList.remove('editing');
+      if (content.textContent.trim() === '') {
+        tb.remove();
+        if (win._wbState.activeBox === tb) win._wbState.activeBox = null;
+        updateWbHint(win);
+      }
+    });
+    
+    // 삭제 버튼
+    tb.querySelector('[data-tb-delete]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      tb.remove();
+      if (win._wbState.activeBox === tb) win._wbState.activeBox = null;
+      updateWbHint(win);
+    });
+    
+    // 위쪽 핸들 - 위치 이동
+    makeWbDraggable(canvas, tb);
+    
+    // 4개 꼭지점 - 글자 크기 조절
+    tb.querySelectorAll('[data-tb-resize]').forEach(handle => {
+      makeWbResizable(canvas, tb, handle, handle.dataset.tbResize);
+    });
+    
+    // 좌우 사이드 - 가로 너비 조절
+    tb.querySelectorAll('[data-tb-side]').forEach(handle => {
+      makeWbWidthResizable(canvas, tb, handle, handle.dataset.tbSide);
+    });
+    
+    // 자동 포커스
+    win._wbState.activeBox = tb;
+    setTimeout(() => content.focus(), 0);
+    
+    updateWbHint(win);
+    return tb;
+  }
+  
+  function applyWbColor(tb, color) {
+    const content = tb.querySelector('.wb-textbox-content');
+    if (content) content.style.color = color;
+  }
+  
+  function makeWbDraggable(canvas, tb) {
+    const handle = tb.querySelector('[data-tb-handle]');
+    let dragging = false;
+    let startX, startY, initLeft, initTop;
+    
+    function getPoint(e) {
+      if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      return { x: e.clientX, y: e.clientY };
+    }
+    
+    function start(e) {
+      dragging = true;
+      const p = getPoint(e);
+      startX = p.x; startY = p.y;
+      initLeft = tb.offsetLeft;
+      initTop = tb.offsetTop;
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+    }
+    
+    function move(e) {
+      if (!dragging) return;
+      const p = getPoint(e);
+      let nx = initLeft + (p.x - startX);
+      let ny = initTop + (p.y - startY);
+      nx = Math.max(0, Math.min(nx, canvas.clientWidth - 50));
+      ny = Math.max(0, Math.min(ny, canvas.clientHeight - 30));
+      tb.style.left = nx + 'px';
+      tb.style.top = ny + 'px';
+    }
+    
+    function end() { dragging = false; }
+    
+    handle.addEventListener('mousedown', start);
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', end);
+    handle.addEventListener('touchstart', start, { passive: false });
+    document.addEventListener('touchmove', move, { passive: false });
+    document.addEventListener('touchend', end);
+  }
+  
+  // 4개 꼭지점 드래그로 폰트 크기 조절 (Canva 스타일)
+  function makeWbResizable(canvas, tb, handle, corner) {
+    const content = tb.querySelector('.wb-textbox-content');
+    let resizing = false;
+    let startX, startY, startSize;
+    let anchorL, anchorT;  // 캔버스 기준, 고정되는 반대편 꼭지점
+    
+    function getPoint(e) {
+      if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      return { x: e.clientX, y: e.clientY };
+    }
+    
+    function start(e) {
+      resizing = true;
+      const p = getPoint(e);
+      startX = p.x;
+      startY = p.y;
+      startSize = parseFloat(getComputedStyle(content).fontSize) || WB_DEFAULT_SIZE;
+      
+      const left = tb.offsetLeft;
+      const top = tb.offsetTop;
+      const width = tb.offsetWidth;
+      const height = tb.offsetHeight;
+      
+      // 반대편 꼭지점이 anchor (고정점)
+      if (corner === 'br')      { anchorL = left;          anchorT = top; }
+      else if (corner === 'bl') { anchorL = left + width;  anchorT = top; }
+      else if (corner === 'tr') { anchorL = left;          anchorT = top + height; }
+      else if (corner === 'tl') { anchorL = left + width;  anchorT = top + height; }
+      
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+    }
+    
+    function move(e) {
+      if (!resizing) return;
+      const p = getPoint(e);
+      const dx = p.x - startX;
+      const dy = p.y - startY;
+      
+      // 꼭지점 방향에 따라 delta 계산 (해당 꼭지점이 바깥쪽으로 갈 때 양수)
+      let delta = 0;
+      if (corner === 'br') delta = dx + dy;
+      else if (corner === 'tl') delta = -(dx + dy);
+      else if (corner === 'tr') delta = dx - dy;
+      else if (corner === 'bl') delta = -dx + dy;
+      
+      // 0.5px 드래그당 1px 폰트 크기 변화 (반응성 좋게)
+      const newSize = Math.max(12, Math.min(240, startSize + delta * 0.5));
+      content.style.fontSize = newSize + 'px';
+      
+      // anchor가 고정되도록 위치 조정
+      const newWidth = tb.offsetWidth;
+      const newHeight = tb.offsetHeight;
+      let newLeft, newTop;
+      
+      if (corner === 'br')      { newLeft = anchorL;              newTop = anchorT; }
+      else if (corner === 'bl') { newLeft = anchorL - newWidth;   newTop = anchorT; }
+      else if (corner === 'tr') { newLeft = anchorL;              newTop = anchorT - newHeight; }
+      else /* tl */              { newLeft = anchorL - newWidth;   newTop = anchorT - newHeight; }
+      
+      tb.style.left = Math.max(0, newLeft) + 'px';
+      tb.style.top = Math.max(0, newTop) + 'px';
+    }
+    
+    function end() { resizing = false; }
+    
+    handle.addEventListener('mousedown', start);
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', end);
+    handle.addEventListener('touchstart', start, { passive: false });
+    document.addEventListener('touchmove', move, { passive: false });
+    document.addEventListener('touchend', end);
+  }
+  
+  // 좌우 사이드 핸들로 가로 너비 조절 (텍스트가 자동 줄바꿈됨)
+  function makeWbWidthResizable(canvas, tb, handle, side) {
+    const content = tb.querySelector('.wb-textbox-content');
+    let resizing = false;
+    let startX, startContentWidth, startLeft;
+    
+    function getPoint(e) {
+      if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      return { x: e.clientX, y: e.clientY };
+    }
+    
+    function start(e) {
+      resizing = true;
+      const p = getPoint(e);
+      startX = p.x;
+      startContentWidth = content.offsetWidth;
+      startLeft = tb.offsetLeft;
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+    }
+    
+    function move(e) {
+      if (!resizing) return;
+      const p = getPoint(e);
+      const dx = p.x - startX;
+      
+      if (side === 'r') {
+        // 오른쪽 드래그 → 너비 증가
+        const newWidth = Math.max(40, startContentWidth + dx);
+        content.style.width = newWidth + 'px';
+        content.style.maxWidth = newWidth + 'px';
+      } else if (side === 'l') {
+        // 왼쪽 드래그 → 왼쪽으로 너비 증가, 박스 위치도 이동
+        const widthDelta = -dx;
+        const newWidth = Math.max(40, startContentWidth + widthDelta);
+        const actualDelta = newWidth - startContentWidth;
+        const newLeft = Math.max(0, startLeft - actualDelta);
+        content.style.width = newWidth + 'px';
+        content.style.maxWidth = newWidth + 'px';
+        tb.style.left = newLeft + 'px';
+      }
+    }
+    
+    function end() { resizing = false; }
+    
+    handle.addEventListener('mousedown', start);
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', end);
+    handle.addEventListener('touchstart', start, { passive: false });
+    document.addEventListener('touchmove', move, { passive: false });
+    document.addEventListener('touchend', end);
+  }
+  
+  function updateWbHint(win) {
+    const board=win.querySelector('[data-wb-canvas]'), hint=win.querySelector('.wb-hint'), draw=win.querySelector('[data-wb-draw]');
+    if(!board||!hint) return;
+    let hasInk=false;
+    try { const d=draw.getContext('2d').getImageData(0,0,draw.width,draw.height).data; for(let i=3;i<d.length;i+=4){ if(d[i]){hasInk=true;break;} } } catch(e){}
+    const hasBoxes=board.querySelectorAll('.wb-textbox').length>0;
+    hint.classList.toggle('hidden',hasBoxes||hasInk);
+    if(!hasBoxes&&!hasInk){
+      hint.querySelector('span:nth-child(2)').textContent=win._wbState.mode==='pen'?'마우스나 터치로 손글씨를 써보세요':'아무 곳이나 클릭해서 글을 입력하세요';
+    }
+  }
+  
+  /* ===== 모둠 만들기 ===== */
+  const GROUP_COLORS = [
+    { border: '#58cc02', text: '#46a302' }, // 그린
+    { border: '#f59e0b', text: '#b45309' }, // 골드
+    { border: '#10b981', text: '#047857' }, // 민트
+    { border: '#ef4444', text: '#b91c1c' }, // 빨강
+    { border: '#0ea5e9', text: '#0369a1' }, // 하늘
+    { border: '#ec4899', text: '#be185d' }, // 핑크
+    { border: '#84cc16', text: '#4d7c0f' }, // 라임
+    { border: '#f97316', text: '#c2410c' }, // 오렌지
+    { border: '#ff9600', text: '#cc7800' }, // 오렌지
+    { border: '#14b8a6', text: '#0f766e' }, // 틸
+  ];
+  
+  const SAMPLE_NAMES = ['김민준', '이서윤', '박도윤', '최지우', '정서준', '강하윤', '조예준', '윤지유', '임시우', '한채원', '오주원', '서수아', '신하준', '권지민', '황건우', '안서연', '송도현', '홍수빈', '유현우', '문예린'];
+  const STUDENTS_STORAGE_KEY = 'classroom_students_v1';
+  
+  function initGroups(win) {
+    win._groupsState = {
+      mode: 'groups',
+      count: 4,
+      students: [],
+      groups: [],
+    };
+    
+    const textarea = win.querySelector('[data-students]');
+    const countInput = win.querySelector('[data-count]');
+    
+    // localStorage에서 기존 명단 불러오기
+    try {
+      const saved = localStorage.getItem(STUDENTS_STORAGE_KEY);
+      if (saved) textarea.value = saved;
+    } catch {}
+    
+    updateGroupsInputCount(win);
+    
+    // 명단 입력 → 자동 저장 + 카운트 업데이트
+    textarea.addEventListener('input', () => {
+      try { localStorage.setItem(STUDENTS_STORAGE_KEY, textarea.value); } catch {}
+      updateGroupsInputCount(win);
+    });
+    
+    // 모드 토글
+    win.querySelectorAll('[data-mode]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode;
+        win._groupsState.mode = mode;
+        win.querySelectorAll('[data-mode]').forEach(b => b.classList.toggle('active', b === btn));
+        const label = win.querySelector('[data-count-label]');
+        label.textContent = mode === 'groups' ? '모둠 개수' : '모둠당 인원';
+      });
+    });
+    
+    // 카운터 +/-
+    win.querySelectorAll('[data-counter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const delta = btn.dataset.counter === '+' ? 1 : -1;
+        const current = parseInt(countInput.value) || 4;
+        const next = Math.max(2, Math.min(20, current + delta));
+        countInput.value = next;
+      });
+    });
+    countInput.addEventListener('input', () => {
+      let v = parseInt(countInput.value);
+      if (isNaN(v)) v = 4;
+      v = Math.max(2, Math.min(20, v));
+      countInput.value = v;
+    });
+    
+    // 예시 채우기
+    win.querySelector('[data-action="sample"]').addEventListener('click', () => {
+      textarea.value = SAMPLE_NAMES.join('\n');
+      try { localStorage.setItem(STUDENTS_STORAGE_KEY, textarea.value); } catch {}
+      updateGroupsInputCount(win);
+    });
+    
+    // 지우기
+    win.querySelector('[data-action="clear"]').addEventListener('click', () => {
+      if (textarea.value && !confirm('명단을 모두 지울까요?')) return;
+      textarea.value = '';
+      try { localStorage.removeItem(STUDENTS_STORAGE_KEY); } catch {}
+      updateGroupsInputCount(win);
+    });
+    
+    // 모둠 만들기
+    win.querySelector('[data-action="generate"]').addEventListener('click', () => {
+      const students = parseStudents(textarea.value);
+      if (students.length < 2) {
+        alert('학생을 2명 이상 입력해주세요.');
+        return;
+      }
+      const count = parseInt(countInput.value) || 4;
+      win._groupsState.students = students;
+      win._groupsState.count = count;
+      generateAndShowGroups(win);
+    });
+    
+    // 다시 섞기
+    win.querySelector('[data-action="reshuffle"]').addEventListener('click', () => {
+      generateAndShowGroups(win);
+    });
+    
+    // 다시 입력
+    win.querySelector('[data-action="back"]').addEventListener('click', () => {
+      switchGroupsView(win, 'setup');
+    });
+    
+    win._cleanup = () => {};
+  }
+  
+  function updateGroupsInputCount(win) {
+    const textarea = win.querySelector('[data-students]');
+    const countEl = win.querySelector('[data-input-count]');
+    const generateBtn = win.querySelector('[data-action="generate"]');
+    const students = parseStudents(textarea.value);
+    countEl.textContent = students.length + '명';
+    if (generateBtn) generateBtn.disabled = students.length < 2;
+  }
+  
+  function parseStudents(text) {
+    return text.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
+  }
+  
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  
+  function generateAndShowGroups(win) {
+    const s = win._groupsState;
+    const shuffled = shuffle(s.students);
+    
+    let numGroups;
+    if (s.mode === 'groups') {
+      numGroups = Math.min(s.count, shuffled.length);
+    } else {
+      numGroups = Math.max(1, Math.ceil(shuffled.length / s.count));
+    }
+    
+    const groups = Array.from({ length: numGroups }, () => []);
+    shuffled.forEach((name, i) => {
+      groups[i % numGroups].push(name);
+    });
+    
+    s.groups = groups;
+    renderGroups(win);
+    switchGroupsView(win, 'result');
+  }
+  
+  function renderGroups(win) {
+    const grid = win.querySelector('[data-groups-grid]');
+    const info = win.querySelector('[data-result-info]');
+    const groups = win._groupsState.groups;
+    const totalStudents = groups.reduce((a, g) => a + g.length, 0);
+    
+    info.textContent = `${groups.length} 모둠 · ${totalStudents}명`;
+    
+    grid.innerHTML = '';
+    groups.forEach((members, i) => {
+      const color = GROUP_COLORS[i % GROUP_COLORS.length];
+      const card = document.createElement('div');
+      card.className = 'group-card';
+      card.style.borderColor = color.border;
+      card.style.color = color.text;
+      card.style.animationDelay = (i * 70) + 'ms';
+      card.innerHTML = `
+        <div class="group-card-header">
+          <div class="group-card-title">모둠 ${i + 1}</div>
+          <div class="group-card-count">${members.length}명</div>
+        </div>
+        <div class="group-card-members">
+          ${members.map(m => `<div class="group-member">${escapeHtml(m)}</div>`).join('')}
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+  
+  function switchGroupsView(win, view) {
+    win.querySelectorAll('[data-groups-view]').forEach(el => {
+      el.classList.toggle('hidden', el.dataset.groupsView !== view);
+    });
+  }
+  
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  
+  /* ===== 매칭 ===== */
+  const MATCH_STORAGE_KEY = 'classroom_match_v1';
+  const SAMPLE_MATCH_G1 = ['김민준', '이서윤', '박도윤', '최지우', '정서준', '강하윤'];
+  const SAMPLE_MATCH_G2 = ['교실 청소', '복도 청소', '화장실 청소', '과학실 정리', '도서실 정리', '운동장 청소'];
+  
+  function initMatch(win) {
+    win._matchState = {
+      pairs: [],
+      leftover: { items: [], group: 0 },
+    };
+    
+    const g1Textarea = win.querySelector('[data-g1]');
+    const g2Textarea = win.querySelector('[data-g2]');
+    
+    // localStorage에서 두 그룹 불러오기
+    try {
+      const saved = localStorage.getItem(MATCH_STORAGE_KEY);
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data.g1) g1Textarea.value = data.g1;
+        if (data.g2) g2Textarea.value = data.g2;
+      }
+    } catch {}
+    
+    updateMatchInputCount(win);
+    
+    function saveCurrent() {
+      try {
+        localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify({
+          g1: g1Textarea.value,
+          g2: g2Textarea.value,
+        }));
+      } catch {}
+    }
+    
+    g1Textarea.addEventListener('input', () => { saveCurrent(); updateMatchInputCount(win); });
+    g2Textarea.addEventListener('input', () => { saveCurrent(); updateMatchInputCount(win); });
+    
+    // 예시 채우기
+    win.querySelector('[data-action="sample"]').addEventListener('click', () => {
+      g1Textarea.value = SAMPLE_MATCH_G1.join('\n');
+      g2Textarea.value = SAMPLE_MATCH_G2.join('\n');
+      saveCurrent();
+      updateMatchInputCount(win);
+    });
+    
+    // 모두 지우기
+    win.querySelector('[data-action="clear"]').addEventListener('click', () => {
+      if ((g1Textarea.value || g2Textarea.value) && !confirm('두 그룹 모두 지울까요?')) return;
+      g1Textarea.value = '';
+      g2Textarea.value = '';
+      try { localStorage.removeItem(MATCH_STORAGE_KEY); } catch {}
+      updateMatchInputCount(win);
+    });
+    
+    // 매칭하기
+    win.querySelector('[data-action="generate"]').addEventListener('click', () => {
+      const g1 = parseStudents(g1Textarea.value);
+      const g2 = parseStudents(g2Textarea.value);
+      if (g1.length === 0 || g2.length === 0) {
+        alert('두 그룹 모두에 항목을 입력해주세요.');
+        return;
+      }
+      Object.assign(win._matchState, generateMatch(g1, g2));
+      renderMatch(win);
+      switchMatchView(win, 'result');
+    });
+    
+    // 다시 섞기
+    win.querySelector('[data-action="reshuffle"]').addEventListener('click', () => {
+      const g1 = parseStudents(g1Textarea.value);
+      const g2 = parseStudents(g2Textarea.value);
+      Object.assign(win._matchState, generateMatch(g1, g2));
+      renderMatch(win);
+    });
+    
+    // 다시 입력
+    win.querySelector('[data-action="back"]').addEventListener('click', () => {
+      switchMatchView(win, 'setup');
+    });
+    
+    win._cleanup = () => {};
+  }
+  
+  function updateMatchInputCount(win) {
+    const g1Textarea = win.querySelector('[data-g1]');
+    const g2Textarea = win.querySelector('[data-g2]');
+    const g1Count = win.querySelector('[data-g1-count]');
+    const g2Count = win.querySelector('[data-g2-count]');
+    const generateBtn = win.querySelector('[data-action="generate"]');
+    
+    const g1 = parseStudents(g1Textarea.value);
+    const g2 = parseStudents(g2Textarea.value);
+    
+    g1Count.textContent = g1.length + '개';
+    g2Count.textContent = g2.length + '개';
+    
+    if (generateBtn) generateBtn.disabled = g1.length === 0 || g2.length === 0;
+  }
+  
+  function generateMatch(g1, g2) {
+    const s1 = shuffle(g1);
+    const s2 = shuffle(g2);
+    const minLen = Math.min(s1.length, s2.length);
+    const pairs = [];
+    for (let i = 0; i < minLen; i++) {
+      pairs.push([s1[i], s2[i]]);
+    }
+    let leftover = { items: [], group: 0 };
+    if (s1.length > s2.length) {
+      leftover = { items: s1.slice(minLen), group: 1 };
+    } else if (s2.length > s1.length) {
+      leftover = { items: s2.slice(minLen), group: 2 };
+    }
+    return { pairs, leftover };
+  }
+  
+  function renderMatch(win) {
+    const grid = win.querySelector('[data-match-grid]');
+    const info = win.querySelector('[data-result-info]');
+    const leftoverEl = win.querySelector('[data-leftover]');
+    const leftoverTitle = win.querySelector('[data-leftover-title]');
+    const leftoverItemsEl = win.querySelector('[data-leftover-items]');
+    
+    const { pairs, leftover } = win._matchState;
+    
+    let infoText = `${pairs.length}개 매칭`;
+    if (leftover.items.length > 0) {
+      infoText += ` · 그룹 ${leftover.group} ${leftover.items.length}개 남음`;
+    }
+    info.textContent = infoText;
+    
+    grid.innerHTML = '';
+    pairs.forEach((pair, i) => {
+      const card = document.createElement('div');
+      card.className = 'match-pair-card';
+      card.style.animationDelay = (i * 50) + 'ms';
+      card.innerHTML = `
+        <span class="match-member g1">${escapeHtml(pair[0])}</span>
+        <span class="match-connector">↔</span>
+        <span class="match-member g2">${escapeHtml(pair[1])}</span>
+      `;
+      grid.appendChild(card);
+    });
+    
+    // 남는 항목
+    if (leftover.items.length > 0) {
+      leftoverEl.classList.remove('hidden');
+      const cls = leftover.group === 1 ? 'g1' : 'g2';
+      leftoverTitle.textContent = `⚠ 매칭 안 된 그룹 ${leftover.group} 항목 (${leftover.items.length}개)`;
+      leftoverItemsEl.innerHTML = leftover.items.map(item =>
+        `<span class="match-leftover-item ${cls}">${escapeHtml(item)}</span>`
+      ).join('');
+    } else {
+      leftoverEl.classList.add('hidden');
+    }
+  }
+  
+  function switchMatchView(win, view) {
+    win.querySelectorAll('[data-match-view]').forEach(el => {
+      el.classList.toggle('hidden', el.dataset.matchView !== view);
+    });
+  }
+  
+  /* ===== 발표자 돌림판 ===== */
+  const WHEEL_COLORS = [
+    '#58cc02', '#fbbf24', '#34d399', '#f87171', '#60a5fa',
+    '#f472b6', '#a3e635', '#fb923c', '#1cb0f6', '#2dd4bf'
+  ];
+  
+  function initSpinner(win) {
+    win._spinState = {
+      names: [],
+      rotation: 0,
+      spinning: false,
+      originalNames: [],
+      picked: [],
+      spinTimer: null,
+      needsRedraw: false,
+      spinId: 0,
+    };
+
+    const textarea = win.querySelector('[data-students]');
+    const spinBtn = win.querySelector('[data-action="spin"]');
+    const wheel = win.querySelector('[data-wheel]');
+
+    try {
+      const saved = localStorage.getItem(STUDENTS_STORAGE_KEY);
+      if (saved) textarea.value = saved;
+    } catch {}
+
+    function resetWheelImmediately() {
+      const state = win._spinState;
+      if (state.spinTimer) {
+        clearTimeout(state.spinTimer);
+        state.spinTimer = null;
+      }
+      state.spinning = false;
+      state.rotation = 0;
+      state.needsRedraw = false;
+      wheel.style.transition = 'none';
+      wheel.style.transform = 'rotate(0deg)';
+      drawWheel(win);
+      void wheel.offsetWidth;
+      wheel.style.transition = '';
+    }
+
+    function syncNames() {
+      const state = win._spinState;
+      state.names = parseStudents(textarea.value);
+      state.originalNames = [...state.names];
+      state.picked = [];
+      state.spinId++;
+      const pickedEl = win.querySelector('[data-picked-list]');
+      if (pickedEl) pickedEl.textContent = '뽑힌 학생: 없음';
+      resetWheelImmediately();
+      updateSpinnerInputCount(win);
+    }
+
+    syncNames();
+
+    textarea.addEventListener('input', () => {
+      try { localStorage.setItem(STUDENTS_STORAGE_KEY, textarea.value); } catch {}
+      syncNames();
+    });
+
+    win.querySelector('[data-action="sample"]').addEventListener('click', () => {
+      textarea.value = SAMPLE_NAMES.join('\n');
+      try { localStorage.setItem(STUDENTS_STORAGE_KEY, textarea.value); } catch {}
+      syncNames();
+    });
+
+    win.querySelector('[data-action="clear"]').addEventListener('click', () => {
+      if (textarea.value && !confirm('명단을 모두 지울까요?')) return;
+      textarea.value = '';
+      try { localStorage.removeItem(STUDENTS_STORAGE_KEY); } catch {}
+      syncNames();
+    });
+
+    const restoreBtn = win.querySelector('[data-action="restore"]');
+    if (restoreBtn) restoreBtn.addEventListener('click', () => {
+      const state = win._spinState;
+      state.names = [...state.originalNames];
+      state.picked = [];
+      state.spinId++;
+      const pickedEl = win.querySelector('[data-picked-list]');
+      if (pickedEl) pickedEl.textContent = '뽑힌 학생: 없음';
+      resetWheelImmediately();
+      updateSpinnerInputCount(win);
+    });
+
+    function tryStartSpin(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      const state = win._spinState;
+      if (state.spinning || state.names.length < 1) return;
+
+      // 이전 결과 이후 명단이 변경되었다면, 이번 클릭 시점에만 새 룰렛을 그립니다.
+      // 따라서 결과 표시 후 룰렛이 저절로 움직이는 현상이 발생하지 않습니다.
+      if (state.needsRedraw) {
+        state.rotation = 0;
+        wheel.style.transition = 'none';
+        wheel.style.transform = 'rotate(0deg)';
+        drawWheel(win);
+        void wheel.offsetWidth;
+        wheel.style.transition = '';
+        state.needsRedraw = false;
+      }
+      startSpin(win);
+    }
+
+    spinBtn.addEventListener('click', tryStartSpin);
+
+    win._cleanup = () => {
+      const state = win._spinState;
+      if (state && state.spinTimer) clearTimeout(state.spinTimer);
+      spinBtn.removeEventListener('click', tryStartSpin);
+    };
+  }
+
+  function updateSpinnerInputCount(win) {
+    const textarea = win.querySelector('[data-students]');
+    const countEl = win.querySelector('[data-input-count]');
+    const spinBtn = win.querySelector('[data-action="spin"]');
+    const names = win._spinState ? win._spinState.names : parseStudents(textarea.value);
+    countEl.textContent = names.length + '명';
+    if (spinBtn) {
+      spinBtn.disabled = names.length < 1 || !!win._spinState.spinning;
+      spinBtn.textContent = names.length === 1 ? '마지막 발표자 확인' : '돌리기';
+    }
+  }
+  
+  function drawWheel(win) {
+    const wheel = win.querySelector('[data-wheel]');
+    const names = win._spinState.names;
+    
+    if (names.length === 0) {
+      wheel.innerHTML = `
+        <circle cx="200" cy="200" r="180" fill="#f7fff0" stroke="#e5e5e5" stroke-width="2" stroke-dasharray="6 5"/>
+        <text x="200" y="190" text-anchor="middle" font-family="Nunito, Noto Sans KR, sans-serif" font-size="24" fill="#777" font-weight="800">명단을 입력하세요</text>
+        <text x="200" y="224" text-anchor="middle" font-family="Nunito, Noto Sans KR, sans-serif" font-size="16" fill="#aaa" font-weight="700">줄바꿈 또는 쉼표로 구분</text>`;
+      return;
+    }
+    if (names.length === 1) {
+      wheel.innerHTML = `
+        <circle cx="200" cy="200" r="180" fill="#58cc02" stroke="#46a302" stroke-width="5"/>
+        <text x="200" y="190" text-anchor="middle" font-family="Nunito, Noto Sans KR, sans-serif" font-size="34" fill="white" font-weight="900">${escapeHtml(names[0])}</text>
+        <text x="200" y="232" text-anchor="middle" font-family="Nunito, Noto Sans KR, sans-serif" font-size="16" fill="white" font-weight="800">마지막 발표자</text>`;
+      return;
+    }
+    
+    const cx = 200, cy = 200, r = 180;
+    const segAngle = 360 / names.length;
+    const N = names.length;
+    const fontSize = N <= 6 ? 28 : N <= 10 ? 24 : N <= 16 ? 20 : N <= 24 ? 17 : N <= 32 ? 14 : 11;
+    const maxChars = 4;
+    const textRadius = N <= 6 ? 0.65 : N <= 10 ? 0.70 : 0.74;
+    
+    let svg = '';
+    
+    names.forEach((name, i) => {
+      // 세그먼트는 i*segAngle 중심으로 ±segAngle/2 범위
+      const startAngle = i * segAngle - segAngle / 2;
+      const endAngle = i * segAngle + segAngle / 2;
+      // SVG 좌표계 변환 (시계방향, 0=북쪽 → 0=동쪽 기준)
+      const sa = (startAngle - 90) * Math.PI / 180;
+      const ea = (endAngle - 90) * Math.PI / 180;
+      const startX = cx + r * Math.cos(sa);
+      const startY = cy + r * Math.sin(sa);
+      const endX = cx + r * Math.cos(ea);
+      const endY = cy + r * Math.sin(ea);
+      const largeArc = segAngle > 180 ? 1 : 0;
+      const color = WHEEL_COLORS[i % WHEEL_COLORS.length];
+      
+      svg += `<path d="M ${cx} ${cy} L ${startX} ${startY} A ${r} ${r} 0 ${largeArc} 1 ${endX} ${endY} Z" fill="${color}" stroke="white" stroke-width="2"/>`;
+      
+      // 세로 글자 쌓기 (반지름 방향, 바깥→안쪽 순서로 글자 배치)
+      const midAngle = i * segAngle;
+      const ma = (midAngle - 90) * Math.PI / 180;
+      
+      const chars = [...name].slice(0, maxChars);
+      if ([...name].length > maxChars) chars[chars.length - 1] = '…';
+      const charStep = fontSize * 1.0;
+      const nC = chars.length;
+      
+      chars.forEach((char, k) => {
+        // 첫 글자(k=0)는 바깥쪽 끝, 마지막 글자는 안쪽 끝
+        const charR = textRadius * r + (nC - 1) * charStep / 2 - k * charStep;
+        const charX = cx + charR * Math.cos(ma);
+        const charY = cy + charR * Math.sin(ma);
+        
+        // 각 글자를 midAngle만큼 회전시켜서, 해당 세그먼트가 위쪽에 왔을 때 글자가 똑바로 보이도록
+        svg += `<text x="${charX}" y="${charY}" text-anchor="middle" dominant-baseline="central" font-family="Nunito, Noto Sans KR, sans-serif" font-size="${fontSize}" font-weight="700" fill="#1a1a1a" transform="rotate(${midAngle} ${charX} ${charY})" style="user-select:none;pointer-events:none;">${escapeHtml(char)}</text>`;
+      });
+    });
+    
+    // 중심 원 (START 라벨)
+    svg += `<circle cx="${cx}" cy="${cy}" r="40" fill="white" stroke="#4b4b4b" stroke-width="3"/>`;
+    svg += `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" font-family="Nunito, Noto Sans KR, sans-serif" font-size="20" fill="#4b4b4b" font-weight="700" style="user-select:none;pointer-events:none;">START</text>`;
+    
+    wheel.innerHTML = svg;
+  }
+  
+  function startSpin(win) {
+    const state = win._spinState;
+    if (!state || state.spinning || state.names.length < 1) return;
+
+    const names = [...state.names];
+    const wheel = win.querySelector('[data-wheel]');
+    const spinBtn = win.querySelector('[data-action="spin"]');
+    const resultEl = win.querySelector('[data-result]');
+    const nameEl = win.querySelector('[data-result-name]');
+
+    state.spinning = true;
+    state.spinId += 1;
+    const thisSpinId = state.spinId;
+    if (state.spinTimer) clearTimeout(state.spinTimer);
+    if (spinBtn) spinBtn.disabled = true;
+    wheel.classList.remove('idle');
+    resultEl.classList.remove('win', 'celebrate');
+    nameEl.textContent = '돌리는 중…';
+
+    const winnerIndex = Math.floor(Math.random() * names.length);
+    const winner = names[winnerIndex];
+
+    const finishSpin = () => {
+      // 취소되거나 새 회차가 시작된 타이머는 결과를 변경하지 않습니다.
+      if (!win.isConnected || thisSpinId !== state.spinId) return;
+      state.spinTimer = null;
+      state.spinning = false;
+      wheel.classList.add('idle');
+      nameEl.textContent = winner;
+      resultEl.classList.add('win');
+      void resultEl.offsetWidth;
+      resultEl.classList.add('celebrate');
+      playWinDing();
+
+      const noRepeat = win.querySelector('[data-no-repeat]');
+      if (noRepeat && noRepeat.checked) {
+        state.picked.push(winner);
+        state.names = state.names.filter((_, idx) => idx !== winnerIndex);
+        const pickedEl = win.querySelector('[data-picked-list]');
+        if (pickedEl) pickedEl.textContent = '뽑힌 학생: ' + state.picked.join(', ');
+        // 결과를 그대로 유지하고 다음 버튼 클릭 때만 새 명단으로 다시 그립니다.
+        state.needsRedraw = state.names.length > 0;
+      }
+      updateSpinnerInputCount(win);
+    };
+
+    if (names.length === 1) {
+      state.spinTimer = setTimeout(finishSpin, 450);
+      return;
+    }
+
+    const segAngle = 360 / names.length;
+    const targetAngle = 360 * 6 - winnerIndex * segAngle;
+
+    // 매 회차를 동일한 출발점에서 시작해 회전 속도를 일정하게 유지합니다.
+    // 이전 회차의 누적 회전각을 제거한 뒤, 브라우저가 초기 상태를 확정한 다음 회전합니다.
+    wheel.style.transition = 'none';
+    wheel.style.transform = 'rotate(0deg)';
+    state.rotation = 0;
+    void wheel.getBoundingClientRect();
+
+    const SPIN_DURATION_MS = 2800;
+    wheel.style.transition = `transform ${SPIN_DURATION_MS}ms cubic-bezier(0.17, 0.85, 0.27, 1)`;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!win.isConnected || thisSpinId !== state.spinId) return;
+        state.rotation = targetAngle;
+        wheel.style.transform = `rotate(${targetAngle}deg)`;
+      });
+    });
+
+    state.spinTimer = setTimeout(finishSpin, SPIN_DURATION_MS + 120);
+  }
+
+  function playWinDing() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const beep = (delay, freq, duration, vol) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        const t = audioCtx.currentTime + delay;
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(vol, t + 0.02);
+        gain.gain.linearRampToValueAtTime(0, t + duration);
+        osc.start(t);
+        osc.stop(t + duration);
+      };
+      // 짧은 팡파르
+      beep(0,    660, 0.10, 0.28);
+      beep(0.12, 880, 0.10, 0.28);
+      beep(0.24, 1175, 0.40, 0.32);
+    } catch {}
+  }
+  
+
+  /* ===== 고급 QR 코드 생성기 ===== */
+  function initQRPro(win) {
+    const PRESETS = [
+      ['기본','#4b4b4b','#ffffff'], ['그린','#58cc02','#d7ffb8'], ['딥그린','#1b4332','#d8f3dc'],
+      ['버건디','#6b1f2a','#fce4e8'], ['스카이','#1cb0f6','#ddf4ff'], ['다크','#f0f0f0','#4b4b4b'],
+      ['골드','#7a5c00','#fff8e1'], ['틸','#00514f','#e0f2f1']
+    ];
+    const url=win.querySelector('[data-qr-url]'), title=win.querySelector('[data-qr-title]');
+    const dark=win.querySelector('[data-qr-dark]'), light=win.querySelector('[data-qr-light]');
+    const darkHex=win.querySelector('[data-qr-dark-hex]'), lightHex=win.querySelector('[data-qr-light-hex]');
+    const toggle=win.querySelector('[data-qr-overlay-toggle]'), options=win.querySelector('[data-qr-overlay-options]');
+    const overlayText=win.querySelector('[data-qr-overlay-text]'), overlayColor=win.querySelector('[data-qr-overlay-color]');
+    const overlayBg=win.querySelector('[data-qr-overlay-bg]'), font=win.querySelector('[data-qr-font]');
+    const live=win.querySelector('[data-qr-overlay-live]'), code=win.querySelector('[data-qr-code]');
+    const preview=win.querySelector('[data-qr-preview-box]'), previewTitle=win.querySelector('[data-qr-preview-title]');
+    const hint=win.querySelector('[data-qr-preview-hint]'), download=win.querySelector('[data-qr-download]');
+    let qrInstance=null;
+
+    const presets=win.querySelector('[data-qr-presets]');
+    PRESETS.forEach((p,i)=>{ const b=document.createElement('button'); b.type='button'; b.className='qr-preset'+(i===0?' active':''); b.textContent=p[0]; b.addEventListener('click',()=>{ dark.value=p[1]; light.value=p[2]; darkHex.textContent=p[1]; lightHex.textContent=p[2]; presets.querySelectorAll('.qr-preset').forEach((x,j)=>x.classList.toggle('active',j===i)); }); presets.appendChild(b); });
+
+    [dark,light].forEach((el)=>el.addEventListener('input',()=>{ darkHex.textContent=dark.value; lightHex.textContent=light.value; presets.querySelectorAll('.qr-preset').forEach(x=>x.classList.remove('active')); }));
+    toggle.addEventListener('change',()=>{ options.classList.toggle('hidden',!toggle.checked); live.hidden=!toggle.checked || !overlayText.value.trim(); });
+    overlayText.addEventListener('input',()=>{ win.querySelector('[data-qr-count]').textContent=overlayText.value.length+' / 8'; live.textContent=overlayText.value; live.hidden=!toggle.checked || !overlayText.value.trim(); });
+    overlayColor.addEventListener('input',()=>{ win.querySelector('[data-qr-overlay-color-hex]').textContent=overlayColor.value; live.style.color=overlayColor.value; });
+    overlayBg.addEventListener('input',()=>{ win.querySelector('[data-qr-overlay-bg-hex]').textContent=overlayBg.value; live.style.background=overlayBg.value; });
+    font.addEventListener('input',()=>{ win.querySelector('[data-qr-font-label]').textContent=font.value+'px'; live.style.fontSize=font.value+'px'; });
+
+    function generate(){
+      const text=url.value.trim();
+      if(!text){ alert('URL 또는 텍스트를 입력해주세요.'); url.focus(); return; }
+      code.innerHTML='';
+      if(qrInstance){ try{qrInstance.clear();}catch{} qrInstance=null; }
+      qrInstance=new QRCode(code,{ text, width:240, height:240, colorDark:dark.value, colorLight:light.value, correctLevel:QRCode.CorrectLevel.H });
+      live.textContent=overlayText.value.trim(); live.style.color=overlayColor.value; live.style.background=overlayBg.value; live.style.fontSize=font.value+'px'; live.hidden=!toggle.checked || !overlayText.value.trim();
+      preview.style.background=light.value; previewTitle.style.color=dark.value; previewTitle.textContent=title.value.trim(); previewTitle.style.display=title.value.trim()?'block':'none';
+      hint.textContent=text; download.disabled=false;
+    }
+
+    function save(){
+      const qrCanvas=code.querySelector('canvas'), qrImg=code.querySelector('img'); if(!qrCanvas&&!qrImg) return;
+      const size=240,pad=28,titleH=title.value.trim()?52:16; const out=document.createElement('canvas'); out.width=size+pad*2; out.height=size+pad*2+titleH; const ctx=out.getContext('2d');
+      const finish=()=>{ if(toggle.checked&&overlayText.value.trim()){ const fs=parseInt(font.value); ctx.font=`800 ${fs}px sans-serif`; const txt=overlayText.value.trim(); const tw=ctx.measureText(txt).width; const x=out.width/2,y=pad+size/2; ctx.fillStyle=overlayBg.value; ctx.beginPath(); if(ctx.roundRect)ctx.roundRect(x-tw/2-7,y-fs*.78,tw+14,fs+9,5); else ctx.rect(x-tw/2-7,y-fs*.78,tw+14,fs+9); ctx.fill(); ctx.fillStyle=overlayColor.value; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(txt,x,y); }
+        if(title.value.trim()){ ctx.fillStyle=dark.value; ctx.font='700 15px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(title.value.trim(),out.width/2,pad+size+29,size+pad); }
+        const a=document.createElement('a'); const name=(title.value.trim()||overlayText.value.trim()||'QR').replace(/[\\/:*?"<>|]/g,'_'); a.download=name+'_QR.png'; a.href=out.toDataURL('image/png'); a.click(); };
+      ctx.fillStyle=light.value; ctx.fillRect(0,0,out.width,out.height); if(qrCanvas){ctx.drawImage(qrCanvas,pad,pad,size,size);finish();} else {const img=new Image();img.onload=()=>{ctx.drawImage(img,pad,pad,size,size);finish();};img.src=qrImg.src;}
+    }
+    win.querySelector('[data-qr-generate]').addEventListener('click',generate); download.addEventListener('click',save);
+    url.addEventListener('keydown',e=>{if(e.key==='Enter')generate();});
+    win._cleanup=()=>{};
+  }
+
+
+  /* ===== 키보드 ===== */
+  function initKeyboard(win) {
+    const display = win.querySelector('[data-kb-display]');
+    const stage = win.querySelector('[data-kb-stage]');
+    const container = win.querySelector('[data-kb-container]');
+    const keys = container.querySelectorAll('.kb-key');
+    const historyEl = win.querySelector('[data-kb-history]');
+    const keyHistory=[];
+    function addKeyHistory(label){ keyHistory.push(label); if(keyHistory.length>6) keyHistory.shift(); if(historyEl) historyEl.innerHTML=keyHistory.map(x=>'<span class="kb-history-key">'+escapeHtml(x)+'</span>').join(''); }
+
+    // 화면 자동 맞춤: 컨테이너의 본래 크기를 측정하고 stage에 맞게 transform: scale 적용
+    function fitKeyboard() {
+      if (!stage || !container) return;
+      // offsetWidth/Height는 transform 영향 없이 레이아웃 크기를 반환
+      const baseW = container.offsetWidth;
+      const baseH = container.offsetHeight;
+      const availW = stage.clientWidth;
+      const availH = stage.clientHeight;
+      if (baseW === 0 || baseH === 0 || availW === 0 || availH === 0) return;
+      // 여백 약간 (양 옆 8px)
+      const pad = 8;
+      const sx = (availW - pad * 2) / baseW;
+      const sy = (availH - pad * 2) / baseH;
+      const scale = Math.max(0.4, Math.min(sx, sy, 3.5));
+      container.style.transform = 'scale(' + scale + ')';
+    }
+    // 첫 렌더 직후 + 폰트 로드 후 한번 더
+    requestAnimationFrame(fitKeyboard);
+    setTimeout(fitKeyboard, 80);
+    const resizeObs = new ResizeObserver(() => fitKeyboard());
+    resizeObs.observe(stage);
+    // 폰트 로딩 완료 시 다시
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => fitKeyboard());
+    }
+
+    const keyMap = {
+      'KeyQ': 'Q (ㅂ)', 'KeyW': 'W (ㅈ)', 'KeyE': 'E (ㄷ)', 'KeyR': 'R (ㄱ)', 'KeyT': 'T (ㅅ)',
+      'KeyY': 'Y (ㅛ)', 'KeyU': 'U (ㅕ)', 'KeyI': 'I (ㅑ)', 'KeyO': 'O (ㅐ)', 'KeyP': 'P (ㅔ)',
+      'KeyA': 'A (ㅁ)', 'KeyS': 'S (ㄴ)', 'KeyD': 'D (ㅇ)', 'KeyF': 'F (ㄹ)', 'KeyG': 'G (ㅎ)',
+      'KeyH': 'H (ㅗ)', 'KeyJ': 'J (ㅓ)', 'KeyK': 'K (ㅏ)', 'KeyL': 'L (ㅣ)',
+      'KeyZ': 'Z (ㅋ)', 'KeyX': 'X (ㅌ)', 'KeyC': 'C (ㅊ)', 'KeyV': 'V (ㅍ)', 'KeyB': 'B (ㅠ)',
+      'KeyN': 'N (ㅜ)', 'KeyM': 'M (ㅡ)',
+      'Space': 'Space Bar', 'Enter': 'Enter', 'Backspace': 'Backspace', 'Tab': 'Tab',
+      'ShiftLeft': 'Left Shift', 'ShiftRight': 'Right Shift',
+      'ControlLeft': 'Left Ctrl', 'ControlRight': 'Right Ctrl',
+      'CapsLock': 'Caps Lock',
+      'AltLeft': 'Alt', 'AltRight': '한/영',
+      'MetaLeft': 'Win', 'MetaRight': '한자'
+    };
+
+    function getPrettyKeyName(code, key) {
+      if (keyMap[code]) return keyMap[code];
+      if (code && code.startsWith('Digit')) return code.replace('Digit', '');
+      return key && key.length === 1 ? key.toUpperCase() : (key || code);
+    }
+
+    function onKeyDown(e) {
+      // 도구 내부 입력이 아닐 때만 동작 (다른 도구의 입력 방해 방지)
+      // 키보드 창이 최상위가 아닐 때도 동작은 하되, 특수키 기본동작은 막지 않음
+      if (['Tab', 'AltLeft', 'AltRight', 'MetaLeft', 'MetaRight'].includes(e.code)) {
+        // 키보드 창이 활성(포커스/최상위) 상태일 때만 기본동작 차단
+        const isTopWin = (parseInt(win.style.zIndex, 10) || 0) >= (window.topZ || 0);
+        if (isTopWin && document.activeElement && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+        }
+      }
+      const keyEl = container.querySelector('.kb-key[data-key="' + e.code + '"]');
+      if (keyEl) {
+        keyEl.classList.add('active');
+        const pretty=getPrettyKeyName(e.code, e.key); display.textContent = pretty; addKeyHistory(pretty);
+      }
+    }
+
+    function onKeyUp(e) {
+      const keyEl = container.querySelector('.kb-key[data-key="' + e.code + '"]');
+      if (keyEl) keyEl.classList.remove('active');
+    }
+
+    function onBlur() {
+      keys.forEach(k => k.classList.remove('active'));
+    }
+
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener('blur', onBlur);
+
+    // 마우스/터치 클릭으로도 키 표시
+    keys.forEach(key => {
+      const pressStart = () => {
+        key.classList.add('active');
+        const code = key.dataset.key;
+        const engEl = key.querySelector('.eng');
+        const korEl = key.querySelector('.kor');
+        if (keyMap[code]) {
+          display.textContent = keyMap[code]; addKeyHistory(keyMap[code]);
+        } else if (engEl) {
+          const engText = engEl.textContent;
+          const korText = korEl ? korEl.textContent : '';
+          display.textContent = korText ? engText + ' (' + korText + ')' : engText; addKeyHistory(display.textContent);
+        } else {
+          display.textContent = key.textContent.trim(); addKeyHistory(display.textContent);
+        }
+      };
+      const pressEnd = () => key.classList.remove('active');
+
+      key.addEventListener('mousedown', pressStart);
+      key.addEventListener('mouseup', pressEnd);
+      key.addEventListener('mouseleave', pressEnd);
+      key.addEventListener('touchstart', (e) => { e.preventDefault(); pressStart(); }, { passive: false });
+      key.addEventListener('touchend', pressEnd);
+      key.addEventListener('touchcancel', pressEnd);
+    });
+
+    // 창이 닫힐 때 전역 리스너 + 옵저버 정리
+    win._cleanup = () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', onBlur);
+      try { resizeObs.disconnect(); } catch (e) {}
+    };
+  }
+
+
+  /* ===== 관리자 PIN 잠금 ===== */
+  const OWNER_PIN_KEY = 'classroom_tool_owner_pin_hash_v1';
+  const authOverlay = document.getElementById('authOverlay');
+  const authPin = document.getElementById('authPin');
+  const authTitle = document.getElementById('authTitle');
+  const authDesc = document.getElementById('authDesc');
+  const authSubmit = document.getElementById('authSubmit');
+  const authReset = document.getElementById('authReset');
+  const authError = document.getElementById('authError');
+  async function hashPin(pin){ const data=new TextEncoder().encode(pin); const digest=await crypto.subtle.digest('SHA-256',data); return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
+  function hasOwnerPin(){ try{return !!localStorage.getItem(OWNER_PIN_KEY);}catch{return false;} }
+  function renderAuthMode(){ const setup=!hasOwnerPin(); authTitle.textContent=setup?'처음 사용할 PIN 설정':'수업 도구함 잠금'; authDesc.textContent=setup?'이 기기에서 사용할 관리자 PIN을 4자리 이상 설정하세요.':'설정한 PIN을 입력해야 도구함을 열 수 있습니다.'; authSubmit.textContent=setup?'PIN 설정 후 열기':'열기'; authReset.style.display=setup?'none':'block'; authPin.value=''; authError.textContent=''; setTimeout(()=>authPin.focus(),50); }
+  function lockToolkit(){ Object.keys(openWindows).forEach(id=>closeTool(id)); authOverlay.classList.remove('hidden'); renderAuthMode(); }
+  async function submitAuth(){ const pin=authPin.value.trim(); if(pin.length<4){authError.textContent='PIN은 4자리 이상 입력해주세요.';return;} const h=await hashPin(pin); if(!hasOwnerPin()){ try{localStorage.setItem(OWNER_PIN_KEY,h);}catch{} authOverlay.classList.add('hidden'); return; } const saved=localStorage.getItem(OWNER_PIN_KEY); if(h===saved){authOverlay.classList.add('hidden');authError.textContent='';}else{authError.textContent='PIN이 일치하지 않습니다.';authPin.select();} }
+  authSubmit.addEventListener('click',submitAuth); authPin.addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
+  authReset.addEventListener('click',()=>{ if(confirm('이 기기에 저장된 PIN을 초기화할까요?')){ localStorage.removeItem(OWNER_PIN_KEY); renderAuthMode(); } });
+  document.getElementById('lockNowBtn').addEventListener('click',lockToolkit);
+  renderAuthMode();
+
+
+  /* ===== 도크 클릭 ===== */
+  document.querySelectorAll('.dock-item').forEach(item => {
+    item.addEventListener('click', () => openTool(item.dataset.tool));
+  });
+  
+  /* ===== 정확한 시계 (시스템 시간, 초 경계 동기화) ===== */
+  const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+  const pad = n => String(n).padStart(2, '0');
+  
+  function getGreeting(h) {
+    if (h >= 5 && h < 12) return '좋은 아침입니다';
+    if (h >= 12 && h < 14) return '점심시간이에요';
+    if (h >= 14 && h < 18) return '좋은 오후입니다';
+    if (h >= 18 && h < 22) return '저녁시간이네요';
+    return '늦은 시간입니다';
+  }
+  
+  function tickClock() {
+    const d = new Date();
+    const hStr = pad(d.getHours());
+    const mStr = pad(d.getMinutes());
+    const sStr = pad(d.getSeconds());
+    const sec = d.getSeconds();
+    const timeStr = `${hStr}:${mStr}:${sStr}`;
+    const dateStr = `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${WEEKDAYS[d.getDay()]}요일`;
+    
+    // 상단바 미니 시계
+    const topEl = document.getElementById('topClock');
+    if (topEl) topEl.textContent = timeStr;
+    
+    // 시계 창 - 분리된 시/분/초
+    document.querySelectorAll('[data-clock-h]').forEach(el => el.textContent = hStr);
+    document.querySelectorAll('[data-clock-m]').forEach(el => el.textContent = mStr);
+    document.querySelectorAll('[data-clock-s]').forEach(el => el.textContent = sStr);
+    document.querySelectorAll('[data-clock-date]').forEach(el => el.textContent = dateStr);
+    
+    // 인사말
+    document.querySelectorAll('[data-clock-greeting]').forEach(el => el.textContent = getGreeting(d.getHours()));
+    
+    // 분 진행 게이지 (0초일 때는 트랜지션 없이 0%로 리셋)
+    document.querySelectorAll('[data-clock-bar]').forEach(el => {
+      if (sec === 0) {
+        el.classList.add('no-trans');
+        el.style.width = '0%';
+        // 다음 프레임에 트랜지션 복원하고 천천히 채우기 시작
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            el.classList.remove('no-trans');
+          });
+        });
+      } else {
+        el.style.width = ((sec / 60) * 100) + '%';
+      }
+    });
+    
+    setTimeout(tickClock, 1000 - d.getMilliseconds());
+  }
+  tickClock();
+</script>
+</body>
+</html>
