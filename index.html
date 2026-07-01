@@ -2153,7 +2153,7 @@
   .auth-card input:focus { border-color:#58cc02; box-shadow:0 0 0 3px rgba(31,95,153,.14); }
   .auth-actions { display:flex; gap:8px; margin-top:12px; }
   .auth-submit { flex:1; border:0; border-radius:10px; padding:12px; background:#4b4b4b; color:#fff; font:inherit; font-weight:800; cursor:pointer; }
-  .auth-reset { border:1px solid #e5e5e5; border-radius:10px; padding:12px; background:#fff; color:#777777; font:inherit; font-weight:700; cursor:pointer; }
+  .auth-submit:disabled { opacity:.55; cursor:not-allowed; box-shadow:none!important; }
   .auth-error { min-height:20px; margin-top:9px; color:#c0392b; font-size:12px; }
   .auth-note { margin-top:14px; padding-top:12px; border-top:1px solid #f2f2f2; font-size:11px; color:#a0a0a0; line-height:1.55; }
 
@@ -2309,16 +2309,15 @@ input:focus,textarea:focus{border-color:#58cc02!important;box-shadow:0 0 0 4px #
 
   <div class="auth-overlay" id="authOverlay">
     <div class="auth-card">
-      <span class="auth-badge" id="authBadge">관리자 전용</span>
-      <h2 id="authTitle">수업 도구함 잠금</h2>
-      <p id="authDesc">설정한 PIN을 입력해야 도구함을 열 수 있습니다.</p>
-      <input id="authPin" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="PIN 입력" />
+      <span class="auth-badge">DICOA × MINA 관리자 전용</span>
+      <h2>ClassON 수업도구함 잠금</h2>
+      <p>관리자 비밀번호를 입력해야 도구함을 열 수 있습니다. 비밀번호 설정·초기화 기능은 제공하지 않습니다.</p>
+      <input id="authPin" type="password" autocomplete="current-password" maxlength="40" placeholder="관리자 비밀번호 입력" />
       <div class="auth-actions">
-        <button class="auth-submit" id="authSubmit" type="button">열기</button>
-        <button class="auth-reset" id="authReset" type="button" title="이 기기의 PIN 초기화">PIN 초기화</button>
+        <button class="auth-submit" id="authSubmit" type="button">도구함 열기</button>
       </div>
-      <div class="auth-error" id="authError"></div>
-      <div class="auth-note">이 잠금은 현재 브라우저·기기에 저장되는 수업용 보호 기능입니다. 공개 배포 주소 자체를 완전히 차단하려면 Vercel 인증 또는 별도 로그인 서버가 필요합니다.</div>
+      <div class="auth-error" id="authError" role="alert" aria-live="polite"></div>
+      <div class="auth-note">브라우저 탭을 닫으면 자동으로 다시 잠깁니다. 5회 연속 실패하면 5분 동안 입력이 제한됩니다. 정적 HTML 잠금은 일반적인 무단 사용을 줄이기 위한 기능이며 서버 인증과 동일한 수준의 보안은 아닙니다.</div>
     </div>
   </div>
 
@@ -4402,24 +4401,122 @@ input:focus,textarea:focus{border-color:#58cc02!important;box-shadow:0 0 0 4px #
   }
 
 
-  /* ===== 관리자 PIN 잠금 ===== */
-  const OWNER_PIN_KEY = 'classroom_tool_owner_pin_hash_v1';
+  /* ===== 고정 관리자 비밀번호 잠금 ===== */
+  const ADMIN_PASSWORD_HASH = 'd54f27282fd555a0271c4a1c98ffb8324da542ed5e39697cfad5dbea85177918';
+  const AUTH_SESSION_KEY = 'classon_admin_unlocked_v2';
+  const AUTH_FAIL_COUNT_KEY = 'classon_auth_fail_count_v2';
+  const AUTH_LOCK_UNTIL_KEY = 'classon_auth_lock_until_v2';
+  const MAX_AUTH_ATTEMPTS = 5;
+  const AUTH_LOCK_MS = 5 * 60 * 1000;
+
   const authOverlay = document.getElementById('authOverlay');
   const authPin = document.getElementById('authPin');
-  const authTitle = document.getElementById('authTitle');
-  const authDesc = document.getElementById('authDesc');
   const authSubmit = document.getElementById('authSubmit');
-  const authReset = document.getElementById('authReset');
   const authError = document.getElementById('authError');
-  async function hashPin(pin){ const data=new TextEncoder().encode(pin); const digest=await crypto.subtle.digest('SHA-256',data); return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
-  function hasOwnerPin(){ try{return !!localStorage.getItem(OWNER_PIN_KEY);}catch{return false;} }
-  function renderAuthMode(){ const setup=!hasOwnerPin(); authTitle.textContent=setup?'처음 사용할 PIN 설정':'수업 도구함 잠금'; authDesc.textContent=setup?'이 기기에서 사용할 관리자 PIN을 4자리 이상 설정하세요.':'설정한 PIN을 입력해야 도구함을 열 수 있습니다.'; authSubmit.textContent=setup?'PIN 설정 후 열기':'열기'; authReset.style.display=setup?'none':'block'; authPin.value=''; authError.textContent=''; setTimeout(()=>authPin.focus(),50); }
-  function lockToolkit(){ Object.keys(openWindows).forEach(id=>closeTool(id)); authOverlay.classList.remove('hidden'); renderAuthMode(); }
-  async function submitAuth(){ const pin=authPin.value.trim(); if(pin.length<4){authError.textContent='PIN은 4자리 이상 입력해주세요.';return;} const h=await hashPin(pin); if(!hasOwnerPin()){ try{localStorage.setItem(OWNER_PIN_KEY,h);}catch{} authOverlay.classList.add('hidden'); return; } const saved=localStorage.getItem(OWNER_PIN_KEY); if(h===saved){authOverlay.classList.add('hidden');authError.textContent='';}else{authError.textContent='PIN이 일치하지 않습니다.';authPin.select();} }
-  authSubmit.addEventListener('click',submitAuth); authPin.addEventListener('keydown',e=>{if(e.key==='Enter')submitAuth();});
-  authReset.addEventListener('click',()=>{ if(confirm('이 기기에 저장된 PIN을 초기화할까요?')){ localStorage.removeItem(OWNER_PIN_KEY); renderAuthMode(); } });
-  document.getElementById('lockNowBtn').addEventListener('click',lockToolkit);
-  renderAuthMode();
+
+  async function hashPin(value) {
+    const data = new TextEncoder().encode(value);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function getLockRemainingMs() {
+    const until = Number(localStorage.getItem(AUTH_LOCK_UNTIL_KEY) || 0);
+    return Math.max(0, until - Date.now());
+  }
+
+  function clearExpiredLock() {
+    if (getLockRemainingMs() === 0) {
+      localStorage.removeItem(AUTH_LOCK_UNTIL_KEY);
+      localStorage.removeItem(AUTH_FAIL_COUNT_KEY);
+    }
+  }
+
+  function updateAuthLockMessage() {
+    clearExpiredLock();
+    const remain = getLockRemainingMs();
+    if (!remain) {
+      authSubmit.disabled = false;
+      return false;
+    }
+    authSubmit.disabled = true;
+    const sec = Math.ceil(remain / 1000);
+    const min = Math.floor(sec / 60);
+    const rest = sec % 60;
+    authError.textContent = `비밀번호 입력이 잠겼습니다. ${min}분 ${String(rest).padStart(2, '0')}초 후 다시 시도하세요.`;
+    return true;
+  }
+
+  function showAuth() {
+    authOverlay.classList.remove('hidden');
+    authPin.value = '';
+    authError.textContent = '';
+    updateAuthLockMessage();
+    setTimeout(() => authPin.focus(), 50);
+  }
+
+  function hideAuth() {
+    authOverlay.classList.add('hidden');
+    authError.textContent = '';
+    authPin.value = '';
+  }
+
+  function lockToolkit() {
+    Object.keys(openWindows).forEach(id => closeTool(id));
+    sessionStorage.removeItem(AUTH_SESSION_KEY);
+    showAuth();
+  }
+
+  async function submitAuth() {
+    if (updateAuthLockMessage()) return;
+    const password = authPin.value;
+    if (!password) {
+      authError.textContent = '관리자 비밀번호를 입력하세요.';
+      authPin.focus();
+      return;
+    }
+
+    authSubmit.disabled = true;
+    try {
+      const inputHash = await hashPin(password);
+      if (inputHash === ADMIN_PASSWORD_HASH) {
+        sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
+        localStorage.removeItem(AUTH_FAIL_COUNT_KEY);
+        localStorage.removeItem(AUTH_LOCK_UNTIL_KEY);
+        hideAuth();
+        return;
+      }
+
+      const failures = Number(localStorage.getItem(AUTH_FAIL_COUNT_KEY) || 0) + 1;
+      if (failures >= MAX_AUTH_ATTEMPTS) {
+        localStorage.setItem(AUTH_LOCK_UNTIL_KEY, String(Date.now() + AUTH_LOCK_MS));
+        localStorage.removeItem(AUTH_FAIL_COUNT_KEY);
+        updateAuthLockMessage();
+      } else {
+        localStorage.setItem(AUTH_FAIL_COUNT_KEY, String(failures));
+        authError.textContent = `비밀번호가 일치하지 않습니다. ${MAX_AUTH_ATTEMPTS - failures}회 더 시도할 수 있습니다.`;
+        authPin.select();
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      authError.textContent = '잠금 처리 중 오류가 발생했습니다. HTTPS 주소에서 다시 시도하세요.';
+    } finally {
+      if (!getLockRemainingMs()) authSubmit.disabled = false;
+    }
+  }
+
+  authSubmit.addEventListener('click', submitAuth);
+  authPin.addEventListener('keydown', e => {
+    if (e.key === 'Enter') submitAuth();
+  });
+  document.getElementById('lockNowBtn').addEventListener('click', lockToolkit);
+
+  setInterval(() => {
+    if (!authOverlay.classList.contains('hidden')) updateAuthLockMessage();
+  }, 1000);
+
+  if (sessionStorage.getItem(AUTH_SESSION_KEY) === 'true') hideAuth();
+  else showAuth();
 
 
   /* ===== 도크 클릭 ===== */
